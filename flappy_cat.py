@@ -102,10 +102,10 @@ def main():
                     if i1 in scores:
                         scores.remove(i1)
         if begin == 1 and st and st1:
-            if pygame.key.get_pressed()[pygame.K_SPACE] or pygame.mouse.get_pressed()[0] and not clicked:
+            if pygame.mouse.get_pressed()[0] and not clicked:
                 v2 -= 3
                 clicked = True
-            if not pygame.mouse.get_pressed()[0] and not pygame.key.get_pressed()[pygame.K_SPACE]:
+            if not pygame.mouse.get_pressed()[0]:
                 v2 = 0
                 clicked = False
             y += v1
@@ -144,9 +144,9 @@ def main():
                 re = imgtrubs.get_rect(topleft=u.topleft)
                 screen.blit(imgtrubs, re)
 
-        image = imgbird.subsurface(0, 0, 70, 70)
-        image = pygame.transform.rotate(image, -v1 * 2)
-        screen.blit(image, bird)
+        cat = imgbird.subsurface(0, 0, 70, 70)
+        cat = pygame.transform.rotate(cat, -v1 * 2)
+        screen.blit(cat, bird)
 
         text = font.render('Очки: ' + str(int(score)), 1, pygame.Color(0, 0, 0))
         screen.blit(text, (10, 10))
