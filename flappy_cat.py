@@ -6,7 +6,7 @@ from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH
 
 screen = 0
 clock = 0
-
+score = 0
 
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)
@@ -32,8 +32,34 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
+def end_screen():
+    global score
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
+    logo = pygame.transform.scale(load_image('start_end/gameover.png'), (250, 125))
+    screen.blit(logo, (275, 30))
+    scim = pygame.transform.scale(load_image('start_end/score.png'), (150, 60))
+    screen.blit(scim, (250, 165))
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render(str(int(score)), 1, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.topleft = (420, 165)
+    screen.blit(string_rendered, intro_rect)
+    re = Button(300, 245, load_image('start_end/replay.png'), (200, 56), screen)
+    pygame.mixer.Sound('sound_data/gameover.mp3').play()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        if re.draw():
+            main()
+        if q.draw():
+            return True
+        pygame.display.flip()
+        clock.tick(FPS)
+
 
 def main():
+    global score
     screen.fill((0, 0, 0))
     pygame.display.set_caption('Flappy bird')
     pygame.display.flip()
@@ -54,7 +80,6 @@ def main():
     fonk.append(pygame.Rect(340, 0, 170, 560))
     fonk.append(pygame.Rect(510, 0, 170, 560))
     fonk.append(pygame.Rect(680, 0, 170, 560))
-    score = 0
     y = 200
     v1 = 0
     v2 = 2
@@ -119,7 +144,7 @@ def main():
                 bird.y = y
             if len(trubs) == 0 or trubs[-1].x < 550:
                 trubs.append(pygame.Rect(800, -random.randint(0, 55), 50, 200))
-                trubs.append(pygame.Rect(800, random.randint(350, 550), 50, 200))
+                trubs.append(pygame.Rect(800, random.randint(350, 450), 50, 200))
             if bird.top < 0 or bird.bottom > 540:
                 begin = 2
             for t in trubs:
@@ -131,12 +156,7 @@ def main():
         if begin == 2:
             r = 255
             st = False
-            if pygame.key.get_pressed()[pygame.K_RETURN]:
-                v1 = 0
-                v2 = 0
-                st = True
-                st1 = False
-                begin = 0
+            end_screen()
 
         for h in fonk:
             screen.blit(imgfon, h)
