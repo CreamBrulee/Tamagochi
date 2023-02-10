@@ -5,6 +5,7 @@ import pygame
 import os
 import sys
 from button_and_consts import WIDTH, HEIGHT, FPS, terminate, Button
+import sqlite3
 
 
 all_sprites = pygame.sprite.Group()
@@ -29,6 +30,7 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
     play = Button(325, 168, load_image('start_end/play.png'), (150, 75), screen)
     logo = pygame.transform.scale(load_image('data/game1.png'), (400, 88))
     screen.blit(logo, (200, 30))
@@ -38,15 +40,30 @@ def start_screen():
                 terminate()
         if play.draw():
             return
+        if q.draw():
+            return True
         pygame.display.flip()
         clock.tick(FPS)
 
 
 def end_screen():
+    global score
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    bestsc = cur.execute('''SELECT bestscore from bestscores WHERE game = "catch food"''').fetchone()
+    if bestsc[0] >= score:
+        sc_image = 'start_end/score.png'
+        s = (150, 60)
+        x = 0
+    else:
+        sc_image = 'start_end/newscore.png'
+        s = (180, 60)
+        x = 50
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
     logo = pygame.transform.scale(load_image('start_end/gameover.png'), (250, 125))
     screen.blit(logo, (275, 30))
-    scim = pygame.transform.scale(load_image('start_end/score.png'), (150, 60))
-    screen.blit(scim, (250, 165))
+    scim = pygame.transform.scale(load_image(sc_image), s)
+    screen.blit(scim, (250 - x, 165))
     font = pygame.font.Font(None, 100)
     string_rendered = font.render(str(score), 1, pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
@@ -54,12 +71,19 @@ def end_screen():
     screen.blit(string_rendered, intro_rect)
     re = Button(300, 245, load_image('start_end/replay.png'), (200, 56), screen)
     pygame.mixer.Sound('sound_data/game_over.wav').play()
+    if sc_image == 'start_end/newscore.png':
+        cur.execute('UPDATE bestscores SET bestscore = ? WHERE game = "catch food"', (score,))
+        connect.commit()
+    connect.close()
+    score = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
         if re.draw():
             catchfoodgamef()
+        if q.draw():
+            return True
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -114,7 +138,8 @@ class Food(pygame.sprite.Sprite):
         if not pygame.sprite.collide_mask(self, cat):
             self.rect = self.rect.move(0, 1)
             if self.rect.bottom == height - 80:
-                end_screen()
+                if end_screen():
+                    return True
         else:
             m = pygame.mixer.Sound('sound_data/catch.wav')
             m.play()
@@ -142,7 +167,9 @@ def catchfoodgamef():
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (115, 5)
     k = 0
-    start_screen()
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
+    if start_screen():
+        return True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -158,10 +185,13 @@ def catchfoodgamef():
         player.draw(screen)
         player.update()
         all_sprites.draw(screen)
-        all_sprites.update(cat)
+        if all_sprites.update(cat):
+            return True
         screen.blit(sc, (5, 5))
         string_rendered = font.render(str(score), 1, pygame.Color('black'))
         screen.blit(string_rendered, intro_rect)
+        if q.draw():
+            return True
         pygame.display.flip()
         clock.tick(FPS)
 
