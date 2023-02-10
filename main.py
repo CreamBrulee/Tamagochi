@@ -5,6 +5,7 @@ import pygame
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
+import flappy_cat
 
 
 all_sprites = pygame.sprite.Group()
@@ -97,7 +98,9 @@ def game_screen():
         if q.draw():
             return
         if flappycat.draw():
-            pass
+            flappy_cat.screen = screen
+            flappy_cat.clock = clock
+            flappy_cat.main()
         if micehunt.draw():
             pass
         if catchfood.draw():

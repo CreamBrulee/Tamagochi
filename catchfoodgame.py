@@ -29,7 +29,7 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
-    play = Button(325, 168, load_image('start_end/play.png', colorkey=-1), (150, 75), screen)
+    play = Button(325, 168, load_image('start_end/play.png'), (150, 75), screen)
     logo = pygame.transform.scale(load_image('data/game1.png'), (400, 88))
     screen.blit(logo, (200, 30))
     while True:
@@ -42,7 +42,7 @@ def start_screen():
         clock.tick(FPS)
 
 
-def end_screen(score, game, screen):
+def end_screen():
     logo = pygame.transform.scale(load_image('start_end/gameover.png'), (300, 150))
     screen.blit(logo, (250, 30))
     scim = pygame.transform.scale(load_image('start_end/score.png'), (200, 150))
@@ -53,7 +53,7 @@ def end_screen(score, game, screen):
             if event.type == pygame.QUIT:
                 terminate()
         if re.draw():
-            return
+            catchfoodgamef()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -61,7 +61,7 @@ def end_screen(score, game, screen):
 
 def game_over():
     pygame.mixer.Sound('sound_data/game_over.wav').play()
-    end_screen(score, catchfoodgamef, screen)
+    end_screen()
 
     while True:
         for event in pygame.event.get():
