@@ -101,7 +101,8 @@ def game_screen():
         if flappycat.draw():
             flappy_cat.screen = screen
             flappy_cat.clock = clock
-            flappy_cat.main()
+            if flappy_cat.main():
+                return
         if micehuntb.draw():
             micehunt.screen = screen
             micehunt.clock = clock
@@ -109,7 +110,8 @@ def game_screen():
         if catchfood.draw():
             catchfoodgame.screen = screen
             catchfoodgame.clock = clock
-            catchfoodgamef()
+            if catchfoodgamef():
+                return
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -158,7 +160,6 @@ def meow(cat, pos):
     r = cat.get_rect()
     r.topleft = (275, 185)
     if r.collidepoint(pos):
-        print('H')
         if pygame.mouse.get_pressed()[0] and not clicked:
             clicked = True
             pygame.mixer.Sound('sound_data/gameover.mp3').play()
