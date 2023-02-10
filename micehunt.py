@@ -12,18 +12,11 @@ def load_image(name, colorkey=None):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
     return image
 
 
 all_sprites_try = pygame.sprite.Group()
-all1_sprites = pygame.sprite.Group()
+sprites = pygame.sprite.Group()
 
 
 def load_level(filename):
@@ -136,7 +129,7 @@ class tablet_win_or_defeat:
                 pygame.time.set_timer(pygame.USEREVENT, 100)
                 board.set_view(50, 100, 70)
                 screen1 = pygame.display.set_mode((800, 550))
-                board.render_lvl(screen1, 'lvl' + str(self.lvl + 1) + '.txt')
+                board.render_lvl(screen1, 'data_micehunt/lvl' + str(self.lvl + 1) + '.txt')
                 background = pygame.Surface((800, 550))
                 kol = 0
                 sprites_for_win_or_defeat = pygame.sprite.Group()
@@ -301,7 +294,7 @@ class Board:
         top = self.top
         self.lvl_map_correct = []
         level = load_level(lvl)
-        self.lvl = int(lvl[3])
+        self.lvl = int(lvl[-5])
         for i in range(len(level)):
             a = level[i]
             ben = []
@@ -440,7 +433,7 @@ class menu_lvl:
         self.top = top
         self.cell_size = cell_size
 
-    def render(self, screen):
+    def render(self, screen, sprites):
         left = self.left
         top = self.top
         for i in range(0, 800, 70):  # рисуем траву везде
@@ -448,84 +441,84 @@ class menu_lvl:
                 sprite_1 = pygame.sprite.Sprite()
                 sprite_1.image = load_image('fon_leveles.png')
                 sprite_1.rect = sprite_1.image.get_rect()
-                all1_sprites.add(sprite_1)
+                sprites.add(sprite_1)
                 sprite_1.rect = i, j
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('break.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 760, 0
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 180 + 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 360 + 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 150, 295
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 180 + 150, 295
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 360 + 150, 295
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[1]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 150 + 20, 115 + 20
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[2]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 180 + 150 + 20, 115 + 20
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[3]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 360 + 150 + 20, 115 + 20
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[4]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 150 + 20, 295 + 20
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[5]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 180 + 150 + 20, 295 + 20
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = ALL_SPRITES_MY_NUMBERS[6]
         sprite_1.rect = sprite_1.image.get_rect()
-        all1_sprites.add(sprite_1)
+        sprites.add(sprite_1)
         sprite_1.rect = 360 + 150 + 20, 295 + 20
 
     def get_click(self, mouse_pos):
@@ -535,7 +528,7 @@ class menu_lvl:
             pygame.time.set_timer(pygame.USEREVENT, 100)
             board.set_view(50, 100, 70)
             screen1 = pygame.display.set_mode((800, 550))
-            board.render_lvl(screen1, 'lvl' + str(self.get_cell(mouse_pos)) + '.txt')
+            board.render_lvl(screen1, 'data_micehunt/lvl' + str(self.get_cell(mouse_pos)) + '.txt')
             background = pygame.Surface((800, 550))
             kol = 0
             sprites_for_win_or_defeat = pygame.sprite.Group()
@@ -571,7 +564,7 @@ class menu_lvl:
             return 6
 
 
-def start():
+def micehunt_f():
     board1 = menu_lvl(10, 6)
     running = True
     board1.set_view(50, 65, 70)
@@ -582,10 +575,10 @@ def start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 board1.get_click(event.pos)
         screen.fill((215, 125, 49))
-        all1_sprites = pygame.sprite.Group()
-        board1.render(screen)
+        all_sprites_for_menu_lvl = pygame.sprite.Group()
+        board1.render(screen, all_sprites_for_menu_lvl)
         # print(all1_sprites, 'all1_sprites')
-        all1_sprites.draw(screen)
+        all_sprites_for_menu_lvl.draw(screen)
         pygame.display.flip()
 
 
@@ -593,3 +586,4 @@ if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((800, 550))
+    micehunt_f()
