@@ -538,8 +538,7 @@ class menu_lvl:
                     if event1.type == pygame.QUIT:
                         running1 = False
                     if event1.type == pygame.MOUSEBUTTONDOWN:
-                        if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
-                            running1 = False
+                        board.get_click(screen1, sprites_for_win_or_defeat, event1.pos)
                     if event1.type == pygame.USEREVENT:
                         kol += 1
                 all_sprites_try = pygame.sprite.Group()
