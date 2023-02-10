@@ -76,55 +76,93 @@ class tablet_win_or_defeat:
                 sprites.add(sprite_1)
                 sprite_1.rect = i, j
 
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('win_fon.png')
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 0, 0
-
         self.krestik = Button(760, 0, load_image('break.png'), (40, 40), screen)
 
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('LvL.png')
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 70, -30
-
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = ALL_SPRITES_MY_NUMBERS_FOR_LvL[self.lvl]
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 185, 15
-
-        kol = 60
-
-        for i in range(3):
+        if self.win:
             sprite_1 = pygame.sprite.Sprite()
-            sprite_1.image = load_image('not_star.png')
+            sprite_1.image = load_image('win_fon.png')
             sprite_1.rect = sprite_1.image.get_rect()
             sprites.add(sprite_1)
-            sprite_1.rect = 306 + kol * i, 140
+            sprite_1.rect = 0, 0
 
-        for i in range(self.stars):
+
             sprite_1 = pygame.sprite.Sprite()
-            sprite_1.image = load_image('star.png')
+            sprite_1.image = load_image('LvL.png')
             sprite_1.rect = sprite_1.image.get_rect()
             sprites.add(sprite_1)
-            sprite_1.rect = 306 + kol * i, 140
+            sprite_1.rect = 70, -30
+
+            sprite_1 = pygame.sprite.Sprite()
+            sprite_1.image = ALL_SPRITES_MY_NUMBERS_FOR_LvL[self.lvl]
+            sprite_1.rect = sprite_1.image.get_rect()
+            sprites.add(sprite_1)
+            sprite_1.rect = 185, 15
+
+            kol = 60
+
+            for i in range(3):
+                sprite_1 = pygame.sprite.Sprite()
+                sprite_1.image = load_image('not_star.png')
+                sprite_1.rect = sprite_1.image.get_rect()
+                sprites.add(sprite_1)
+                sprite_1.rect = 306 + kol * i, 140
+
+            for i in range(self.stars):
+                sprite_1 = pygame.sprite.Sprite()
+                sprite_1.image = load_image('star.png')
+                sprite_1.rect = sprite_1.image.get_rect()
+                sprites.add(sprite_1)
+                sprite_1.rect = 306 + kol * i, 140
+        else:
+            sprite_1 = pygame.sprite.Sprite()
+            sprite_1.image = load_image('defeat_fon.png')
+            sprite_1.rect = sprite_1.image.get_rect()
+            sprites.add(sprite_1)
+            sprite_1.rect = 0, 0
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
 
     def get_cell(self, mouse_pos):
-        if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[1] <= 489:
-            if self.lvl <= 5:
+        if self.win:
+            if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[1] <= 489:
+                if self.lvl <= 5:
+                    board = Board(10, 6)
+                    running1 = True
+                    clock = pygame.time.Clock()
+                    pygame.time.set_timer(pygame.USEREVENT, 100)
+                    board.set_view(50, 100, 70)
+                    screen1 = pygame.display.set_mode((800, 550))
+                    board.render_lvl(screen1, 'data_micehunt/lvl' + str(self.lvl + 1) + '.txt')
+                    background = pygame.Surface((800, 550))
+                    kol = 0
+                    sprites_for_win_or_defeat = pygame.sprite.Group()
+                    flag = False
+                    while running1:
+                        for event1 in pygame.event.get():
+                            if event1.type == pygame.QUIT:
+                                terminate()
+                            if event1.type == pygame.MOUSEBUTTONDOWN:
+                                if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
+                                    running1 = False
+                            if event1.type == pygame.USEREVENT:
+                                kol += 1
+                        all_sprites_try = pygame.sprite.Group()
+                        # all_sprites_try.clear(screen1,background )
+                        board.render(all_sprites_try, screen1, kol)
+                        # print(len(all_sprites_try))
+                        # all_sprites_try.draw(screen1)
+                        pygame.display.flip()
+                else:
+                    pass
+        else:
+            if 299 <= mouse_pos[0] <= 489 and 422 <= mouse_pos[1] <= 482:
                 board = Board(10, 6)
                 running1 = True
-                clock = pygame.time.Clock()
                 pygame.time.set_timer(pygame.USEREVENT, 100)
                 board.set_view(50, 100, 70)
                 screen1 = pygame.display.set_mode((800, 550))
-                board.render_lvl(screen1, 'data_micehunt/lvl' + str(self.lvl + 1) + '.txt')
+                board.render_lvl(screen1, 'data_micehunt/lvl' + str(self.lvl) + '.txt')
                 background = pygame.Surface((800, 550))
                 kol = 0
                 sprites_for_win_or_defeat = pygame.sprite.Group()
@@ -132,10 +170,9 @@ class tablet_win_or_defeat:
                 while running1:
                     for event1 in pygame.event.get():
                         if event1.type == pygame.QUIT:
-                            running1 = False
+                            terminate()
                         if event1.type == pygame.MOUSEBUTTONDOWN:
-                            if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
-                                running1 = False
+                            board.get_click(screen1, sprites_for_win_or_defeat, event1.pos)
                         if event1.type == pygame.USEREVENT:
                             kol += 1
                     all_sprites_try = pygame.sprite.Group()
@@ -144,8 +181,7 @@ class tablet_win_or_defeat:
                     # print(len(all_sprites_try))
                     # all_sprites_try.draw(screen1)
                     pygame.display.flip()
-            else:
-                pass
+
 
 
 class Board:
@@ -267,8 +303,8 @@ class Board:
         sprites.draw(screen_for_render)
 
         pygame.draw.rect(screen_for_render, (255, 255, 255), (140, 10, 210, 70))
-        pygame.draw.rect(screen_for_render, (0, 255, 0), (140, 10, 210 - seconds / 8, 70))
-        self.now_stars = 210 - seconds / 8
+        pygame.draw.rect(screen_for_render, (0, 255, 0), (140, 10, 210 - seconds *2, 70))
+        self.now_stars = 210 - seconds *2
         # pygame.display.flip()
 
         sprite_1 = pygame.sprite.Sprite()
@@ -369,8 +405,7 @@ class Board:
                 while running2:
                     for event1 in pygame.event.get():
                         if event1.type == pygame.QUIT:
-                            running2 = False
-                            return True
+                            terminate()
                         if event1.type == pygame.MOUSEBUTTONDOWN:
                             if win.get_click(event1.pos):
                                 print(1)
@@ -386,6 +421,33 @@ class Board:
                         micehunt_f()
                     pygame.display.flip()
                 #print('WIN')
+            else:
+                print(self.now_stars)
+                if self.now_stars <= 0:
+                    running2 = True
+                    win = tablet_win_or_defeat(800, 550, False, self.lvl, self.now_stars)
+                    pygame.time.set_timer(pygame.USEREVENT, 100)
+                    screen_for_get_cell = pygame.display.set_mode((800, 550))
+                    sprites_for_win_or_defeat = pygame.sprite.Group()
+                    win.render(screen_for_get_cell, sprites_for_win_or_defeat)
+                    while running2:
+                        for event1 in pygame.event.get():
+                            if event1.type == pygame.QUIT:
+                                terminate()
+                            if event1.type == pygame.MOUSEBUTTONDOWN:
+                                if win.get_click(event1.pos):
+                                    print(1)
+                                    running2 = False
+                                    return True
+                        screen.fill((215, 125, 49))
+                        # all_sprites_try.clear(screen1,background )
+                        win.render(screen_for_get_cell, sprites_for_win_or_defeat)
+                        sprites_for_win_or_defeat.draw(screen_for_get_cell)
+                        # print(len(all_sprites_try))
+                        # all_sprites_try.draw(screen1)
+                        if win.krestik.draw():
+                            micehunt_f()
+                        pygame.display.flip()
 
         if 0 <= (mouse_pos[0] - self.top) // self.cell_size <= len(self.board[0]) - 1 and \
                 0 <= (mouse_pos[1] - self.left) // self.cell_size <= len(self.board) - 1:
@@ -435,6 +497,7 @@ class menu_lvl:
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites.add(sprite_1)
                 sprite_1.rect = i, j
+
         krestik = Button(760, 0, load_image('break.png'), (40, 40), screen)
 
         sprite_1 = pygame.sprite.Sprite()
@@ -524,7 +587,7 @@ class menu_lvl:
             while running1:
                 for event1 in pygame.event.get():
                     if event1.type == pygame.QUIT:
-                        running1 = False
+                        terminate()
                     if event1.type == pygame.MOUSEBUTTONDOWN:
                         board.get_click(screen1, sprites_for_win_or_defeat, event1.pos)
                     if event1.type == pygame.USEREVENT:
@@ -558,7 +621,6 @@ def micehunt_f():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 board1.get_click(event.pos)
@@ -574,4 +636,7 @@ if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((800, 550))
+    pygame.mixer.music.load('sound_data/micesound.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
     micehunt_f()
