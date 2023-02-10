@@ -54,14 +54,14 @@ def main():
     score = 0
     y = 200
     v1 = 0
-    v2 = 0
+    v2 = 2
     begin = 0
     running = True
     r = 0
     st = True
     clicked = False
     st1 = False
-
+    m = 1
     for i in range(len(fonk) - 1, -1, -1):
         bob = fonk[i]
         bob.x -= 1
@@ -73,6 +73,7 @@ def main():
         screen.blit(imgfon, h)
     start_screen()
     while running:
+        m += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -103,14 +104,14 @@ def main():
                         scores.remove(i1)
         if begin == 1 and st and st1:
             if pygame.mouse.get_pressed()[0] and not clicked:
-                v2 -= 3
+                v1 = -20
                 clicked = True
             if not pygame.mouse.get_pressed()[0]:
-                v2 = 0
                 clicked = False
-            y += v1
-            v1 = (v1 + v2 + 1) * 0.98
-            bird.y = y
+            if not m % 3:
+                y += v1
+                v1 = v1 + v2
+                bird.y = y
             if len(trubs) == 0 or trubs[-1].x < 550:
                 trubs.append(pygame.Rect(800, -random.randint(0, 55), 50, 200))
                 trubs.append(pygame.Rect(800, random.randint(350, 550), 50, 200))
@@ -145,7 +146,10 @@ def main():
                 screen.blit(imgtrubs, re)
 
         cat = imgbird.subsurface(0, 0, 70, 70)
-        cat = pygame.transform.rotate(cat, -v1 * 2)
+        if v1 > -25:
+             cat = pygame.transform.rotate(cat, -v1 * 2)
+        else:
+            cat = pygame.transform.rotate(cat, 20 * 2)
         screen.blit(cat, bird)
 
         text = font.render('Очки: ' + str(int(score)), 1, pygame.Color(0, 0, 0))
@@ -156,7 +160,7 @@ def main():
     pygame.quit()
 
 
-if __name__ == '__main__':
+if __name__ == 'main':
     pygame.init()
     size = width, height = WIDTH, HEIGHT
     screen = pygame.display.set_mode(size)
