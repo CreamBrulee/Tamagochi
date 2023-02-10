@@ -522,7 +522,7 @@ class menu_lvl:
         sprite_1.rect = 360 + 150 + 20, 295 + 20
 
     def get_click(self, mouse_pos):
-        if type(self.get_cell(mouse_pos)) == 'int' and 1 <= self.get_cell(mouse_pos) <= 6:
+        if type(self.get_cell(mouse_pos)) == int and 1 <= self.get_cell(mouse_pos) <= 6:
             board = Board(10, 6)
             running1 = True
             pygame.time.set_timer(pygame.USEREVENT, 100)
