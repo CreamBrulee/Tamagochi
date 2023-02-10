@@ -17,6 +17,7 @@ def load_image(name, colorkey=None):
     return image
 
 def start_screen():
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
     play = Button(325, 168, load_image('start_end/play.png', colorkey=-1), (150, 75), screen)
     logo = pygame.transform.scale(load_image('data/game3.png'), (400, 88))
     screen.blit(logo, (200, 30))
@@ -26,6 +27,8 @@ def start_screen():
                 terminate()
         if play.draw():
             return
+        if q.draw():
+            return True
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -69,9 +72,11 @@ def main():
             fonk.remove(bob)
         if fonk[-1].right <= 800:
             fonk.append(pygame.Rect(fonk[-1].right, 0, 170, 550))
+    q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
     for h in fonk:
         screen.blit(imgfon, h)
-    start_screen()
+    if start_screen():
+        return True
     while running:
         m += 1
         for event in pygame.event.get():
@@ -133,8 +138,6 @@ def main():
                 st1 = False
                 begin = 0
 
-
-        screen.fill((r, 0, 0))
         for h in fonk:
             screen.blit(imgfon, h)
         for u in trubs:
@@ -154,6 +157,8 @@ def main():
 
         text = font.render('Очки: ' + str(int(score)), 1, pygame.Color(0, 0, 0))
         screen.blit(text, (10, 10))
+        if q.draw():
+            return True
 
         pygame.display.flip()
         clock.tick(60)
