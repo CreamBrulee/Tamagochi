@@ -1,10 +1,14 @@
 import pygame
 import os
+import sqlite3
 import sys
 screen = None
 clock = None
 from button_and_consts import terminate, Button
+con = sqlite3.connect("tamagochi.db")
 
+# Создание курсора
+cur = con.cursor()
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('../Tamagochi/data_micehunt', name)
