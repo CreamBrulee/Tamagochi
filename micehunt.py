@@ -522,7 +522,7 @@ class menu_lvl:
         sprite_1.rect = 360 + 150 + 20, 295 + 20
 
     def get_click(self, mouse_pos):
-        if 1 <= self.get_cell(mouse_pos) <= 6:
+        if type(self.get_cell(mouse_pos)) == 'int' and 1 <= self.get_cell(mouse_pos) <= 6:
             board = Board(10, 6)
             running1 = True
             pygame.time.set_timer(pygame.USEREVENT, 100)
@@ -538,8 +538,7 @@ class menu_lvl:
                     if event1.type == pygame.QUIT:
                         running1 = False
                     if event1.type == pygame.MOUSEBUTTONDOWN:
-                        if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
-                            running1 = False
+                        board.get_click(screen1, sprites_for_win_or_defeat, event1.pos)
                     if event1.type == pygame.USEREVENT:
                         kol += 1
                 all_sprites_try = pygame.sprite.Group()
