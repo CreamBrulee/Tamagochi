@@ -3,6 +3,7 @@ import os
 import sys
 screen = None
 clock = None
+from button_and_consts import terminate, Button
 
 
 def load_image(name, colorkey=None):
@@ -81,11 +82,7 @@ class tablet_win_or_defeat:
         sprites.add(sprite_1)
         sprite_1.rect = 0, 0
 
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('break.png')
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 760, 0
+        self.krestik = Button(760, 0, load_image('break.png'), (40, 40), screen)
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('LvL.png')
@@ -117,8 +114,6 @@ class tablet_win_or_defeat:
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
-        if 760 <= mouse_pos[0] <= 800 and 0 <= mouse_pos[1] <= 40:
-            return True
 
     def get_cell(self, mouse_pos):
         if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[1] <= 489:
@@ -248,11 +243,7 @@ class Board:
             top += self.cell_size
             left = self.left
 
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('break.png')
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 760, 0
+        krestik = Button(760, 0, load_image('break.png'), (40, 40), screen)
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('button_check.png')
@@ -385,13 +376,14 @@ class Board:
                                 print(1)
                                 running2 = False
                                 return True
-
                     screen.fill((215, 125, 49))
                     # all_sprites_try.clear(screen1,background )
                     win.render(screen_for_get_cell, sprites_for_win_or_defeat)
                     sprites_for_win_or_defeat.draw(screen_for_get_cell)
                     # print(len(all_sprites_try))
                     # all_sprites_try.draw(screen1)
+                    if win.krestik.draw():
+                        micehunt_f()
                     pygame.display.flip()
                 #print('WIN')
 
@@ -443,11 +435,7 @@ class menu_lvl:
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites.add(sprite_1)
                 sprite_1.rect = i, j
-        sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('break.png')
-        sprite_1.rect = sprite_1.image.get_rect()
-        sprites.add(sprite_1)
-        sprite_1.rect = 760, 0
+        krestik = Button(760, 0, load_image('break.png'), (40, 40), screen)
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
@@ -571,6 +559,7 @@ def micehunt_f():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 board1.get_click(event.pos)
         screen.fill((215, 125, 49))
