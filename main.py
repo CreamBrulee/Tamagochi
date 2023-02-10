@@ -170,6 +170,7 @@ if __name__ == '__main__':
     pygame.display.set_caption('CatLIFE')
     pygame.mixer.music.load('sound_data/fon.mp3')
     pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
     clock = pygame.time.Clock()
     running = True
     a = start_screen()

@@ -43,26 +43,11 @@ def start_screen():
 
 
 def end_screen():
-    logo = pygame.transform.scale(load_image('start_end/gameover.png'), (300, 150))
-    screen.blit(logo, (250, 30))
+    logo = pygame.transform.scale(load_image('start_end/gameover.png'), (250, 125))
+    screen.blit(logo, (225, 30))
     scim = pygame.transform.scale(load_image('start_end/score.png'), (200, 150))
     screen.blit(logo, (250, 30))
-    re = Button(50, 305, load_image('start_end/replay.png'), (300, 84), screen)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-        if re.draw():
-            catchfoodgamef()
-        pygame.display.flip()
-        clock.tick(FPS)
-
-
-
-def game_over():
-    pygame.mixer.Sound('sound_data/game_over.wav').play()
-    end_screen()
-
+    re = Button(300, 305, load_image('start_end/replay.png'), (200, 56), screen)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -123,7 +108,7 @@ class Food(pygame.sprite.Sprite):
         if not pygame.sprite.collide_mask(self, cat):
             self.rect = self.rect.move(0, 1)
             if self.rect.bottom == height - 80:
-                game_over()
+                end_screen()
         else:
             m = pygame.mixer.Sound('sound_data/catch.wav')
             m.play()
@@ -145,6 +130,11 @@ def catchfoodgamef():
     pygame.mixer.music.set_volume(0.3)
     cat = Catplayer()
     player.draw(screen)
+    sc = pygame.transform.scale(load_image('start_end/score.png'), (100, 50))
+    font = pygame.font.Font(None, 70)
+    string_rendered = font.render(str(score), 1, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.topleft = (115, 5)
     k = 0
     start_screen()
     while running:
@@ -163,6 +153,9 @@ def catchfoodgamef():
         player.update()
         all_sprites.draw(screen)
         all_sprites.update(cat)
+        screen.blit(sc, (5, 5))
+        string_rendered = font.render(str(score), 1, pygame.Color('black'))
+        screen.blit(string_rendered, intro_rect)
         pygame.display.flip()
         clock.tick(FPS)
 
