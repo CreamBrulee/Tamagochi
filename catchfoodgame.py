@@ -130,7 +130,7 @@ def catchfoodgamef():
     pygame.mixer.music.set_volume(0.3)
     cat = Catplayer()
     player.draw(screen)
-    sc = pygame.transform.scale(load_image('start_end/score.png'), (100, 50))
+    sc = pygame.transform.scale(load_image('start_end/score.png'), (100, 40))
     font = pygame.font.Font(None, 70)
     string_rendered = font.render(str(score), 1, pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
