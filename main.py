@@ -102,15 +102,25 @@ def game_screen():
             flappy_cat.screen = screen
             flappy_cat.clock = clock
             if flappy_cat.main():
+                pygame.mixer.music.load('sound_data/fon.mp3')
+                pygame.mixer.music.play(-1)
+                pygame.mixer.music.set_volume(0.5)
                 return
         if micehuntb.draw():
             micehunt.screen = screen
             micehunt.clock = clock
-            micehunt.micehunt_f()
+            if micehunt.micehunt_f():
+                pygame.mixer.music.load('sound_data/fon.mp3')
+                pygame.mixer.music.play(-1)
+                pygame.mixer.music.set_volume(0.5)
+                return
         if catchfood.draw():
             catchfoodgame.screen = screen
             catchfoodgame.clock = clock
             if catchfoodgamef():
+                pygame.mixer.music.load('sound_data/fon.mp3')
+                pygame.mixer.music.play(-1)
+                pygame.mixer.music.set_volume(0.5)
                 return
         pygame.display.flip()
         clock.tick(FPS)
@@ -179,7 +189,6 @@ if __name__ == '__main__':
     running = True
     a = start_screen()
     if a:
-        print(2)
         fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
         gamesb = Button(72, 450, load_image('games.png'), (110, 110), screen)
