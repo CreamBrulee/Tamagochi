@@ -6,6 +6,7 @@ from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
 import flappy_cat
+import micehunt
 
 
 all_sprites = pygame.sprite.Group()
@@ -89,7 +90,7 @@ def extra_screen():
 def game_screen():
     q = extra_screen()
     flappycat = Button(50, 50, load_image('game3.png'), (500, 113), screen)
-    micehunt = Button(50, 183, load_image('game2.png'), (500, 113), screen)
+    micehuntb = Button(50, 183, load_image('game2.png'), (500, 113), screen)
     catchfood = Button(50, 316, load_image('game1.png'), (500, 113), screen)
     while True:
         for event in pygame.event.get():
@@ -101,8 +102,10 @@ def game_screen():
             flappy_cat.screen = screen
             flappy_cat.clock = clock
             flappy_cat.main()
-        if micehunt.draw():
-            pass
+        if micehuntb.draw():
+            micehunt.screen = screen
+            micehunt.clock = clock
+            micehunt.micehunt_f()
         if catchfood.draw():
             catchfoodgame.screen = screen
             catchfoodgame.clock = clock

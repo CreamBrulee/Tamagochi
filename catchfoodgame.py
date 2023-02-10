@@ -44,10 +44,16 @@ def start_screen():
 
 def end_screen():
     logo = pygame.transform.scale(load_image('start_end/gameover.png'), (250, 125))
-    screen.blit(logo, (225, 30))
-    scim = pygame.transform.scale(load_image('start_end/score.png'), (200, 150))
-    screen.blit(logo, (250, 30))
-    re = Button(300, 305, load_image('start_end/replay.png'), (200, 56), screen)
+    screen.blit(logo, (275, 30))
+    scim = pygame.transform.scale(load_image('start_end/score.png'), (150, 60))
+    screen.blit(scim, (250, 165))
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render(str(score), 1, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.topleft = (420, 165)
+    screen.blit(string_rendered, intro_rect)
+    re = Button(300, 245, load_image('start_end/replay.png'), (200, 56), screen)
+    pygame.mixer.Sound('sound_data/game_over.wav').play()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
