@@ -60,11 +60,15 @@ def end_screen():
 
 def main():
     global score
+    pygame.mixer.music.load('sound_data/fonk.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.5)
+    sc = pygame.transform.scale(load_image('start_end/score.png'), (100, 40))
     screen.fill((0, 0, 0))
     pygame.display.set_caption('Flappy bird')
     pygame.display.flip()
     y = 200
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font(None, 70)
     fontt = pygame.font.Font(None, 80)
     bird = pygame.Rect(200, y, 50, 50)
     imgbird = pygame.transform.scale(load_image('data/cat.png'), (70, 70))
@@ -174,9 +178,9 @@ def main():
         else:
             cat = pygame.transform.rotate(cat, 20 * 2)
         screen.blit(cat, bird)
-
-        text = font.render('Очки: ' + str(int(score)), 1, pygame.Color(0, 0, 0))
-        screen.blit(text, (10, 10))
+        text = font.render(str(int(score)), 1, (0, 0, 0))
+        screen.blit(sc, (10, 10))
+        screen.blit(text, (118, 8))
         if q.draw():
             return True
 
