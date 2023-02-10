@@ -119,7 +119,7 @@ def main():
                 bird.y = y
             if len(trubs) == 0 or trubs[-1].x < 550:
                 trubs.append(pygame.Rect(800, -random.randint(0, 55), 50, 200))
-                trubs.append(pygame.Rect(800, random.randint(350, 550), 50, 200))
+                trubs.append(pygame.Rect(800, random.randint(350, 450), 50, 200))
             if bird.top < 0 or bird.bottom > 540:
                 begin = 2
             for t in trubs:
