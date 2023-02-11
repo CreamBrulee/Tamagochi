@@ -179,6 +179,12 @@ def meow(cat, pos):
         clicked = False
 
 
+def draw_foodsc():
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    coins = cur.execute('''SELECT coins from money''').fetchone()[0]
+
+
 if __name__ == '__main__':
     pygame.init()
     size = width, height = WIDTH, HEIGHT
@@ -191,6 +197,8 @@ if __name__ == '__main__':
     running = True
     a = start_screen()
     if a:
+        food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
+        screen.blit(food_scale, (300, 5))
         connect = sqlite3.connect('tamagochi.db')
         cur = connect.cursor()
         coins = cur.execute('''SELECT coins from money''').fetchone()[0]
@@ -228,7 +236,10 @@ if __name__ == '__main__':
             pos = pygame.mouse.get_pos()
             screen.blit(coin, (5, 5))
             screen.blit(string_rendered, intro_rect)
-            pygame.display.flip()
-            meow(maincat, pos)
 
+            meow(maincat, pos)
+            pygame.draw.rect(screen, (255, 255, 255), (300, 5, 90, 100))
+            draw_foodsc()
+            screen.blit(food_scale, (300, 5))
+            pygame.display.flip()
             clock.tick(FPS)
