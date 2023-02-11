@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import sys
 import pygame
 
@@ -7,6 +8,7 @@ import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
 import flappy_cat
 import micehunt
+import datetime
 
 
 all_sprites = pygame.sprite.Group()
@@ -189,6 +191,16 @@ if __name__ == '__main__':
     running = True
     a = start_screen()
     if a:
+        connect = sqlite3.connect('tamagochi.db')
+        cur = connect.cursor()
+        coins = cur.execute('''SELECT coins from money''').fetchone()[0]
+        coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
+        font = pygame.font.Font(None, 100)
+        string_rendered = font.render(str(coins), 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.topleft = (80, 5)
+        screen.blit(string_rendered, intro_rect)
+        screen.blit(coin, (5, 5))
         fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
         gamesb = Button(72, 450, load_image('games.png'), (110, 110), screen)
@@ -198,6 +210,7 @@ if __name__ == '__main__':
         maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
         screen.blit(maincat, (275, 185))
         rect = maincat.get_rect()
+        connect.close()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -213,6 +226,8 @@ if __name__ == '__main__':
                 shop_screen()
             screen.blit(maincat, (275, 185))
             pos = pygame.mouse.get_pos()
+            screen.blit(coin, (5, 5))
+            screen.blit(string_rendered, intro_rect)
             pygame.display.flip()
             meow(maincat, pos)
 
