@@ -1,4 +1,5 @@
 import datetime
+import os
 import sqlite3
 import sys
 
@@ -8,6 +9,34 @@ FPS = 50
 WIDTH = 800
 HEIGHT = 550
 perc = 0
+
+
+def load_image(name, colorkey=None):
+    if not os.path.isfile(name):
+        print(f"Файл с изображением '{name}' не найден")
+        sys.exit()
+    image = pygame.image.load(name)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    return image
+
+
+def earning_money(screen, money):
+    coin = pygame.transform.scale(load_image('data/coin.png'), (60, 60))
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render('+' + str(int(money)), 1, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.topleft = (5, 60)
+    screen.blit(coin, (intro_rect.right + 5, 60))
+    screen.blit(string_rendered, intro_rect)
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    cur.execute('UPDATE money SET coins = coins + ?', (money,))
+    connect.commit()
+    connect.close()
 
 
 class Button:

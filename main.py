@@ -3,6 +3,7 @@ import sqlite3
 import sys
 import pygame
 
+import button_and_consts
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate, perc
@@ -16,7 +17,8 @@ startsc_buttons = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    if not name.split('/')[0] == 'data':
+        fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -185,7 +187,21 @@ def draw_foodsc():
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    time = diff.days * 24 * 60
+    time = diff.seconds // 60
+    x = 100 - (100 * (percents - 0.84 * time) // 100 if (percents - 0.84 * time) > 0 else 0)
+    button_and_consts.perc = percents - 0.14 * time
+    pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
+    connect.close()
+
+def draw_money():
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    coins = cur.execute('''SELECT coins from money''').fetchone()[0]
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render(str(coins), 1, pygame.Color('white'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.topleft = (80, 5)
+    screen.blit(string_rendered, intro_rect)
     connect.close()
 
 
@@ -203,15 +219,8 @@ if __name__ == '__main__':
     if a:
         food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
         screen.blit(food_scale, (300, 5))
-        connect = sqlite3.connect('tamagochi.db')
-        cur = connect.cursor()
-        coins = cur.execute('''SELECT coins from money''').fetchone()[0]
+
         coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
-        font = pygame.font.Font(None, 100)
-        string_rendered = font.render(str(coins), 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        intro_rect.topleft = (80, 5)
-        screen.blit(string_rendered, intro_rect)
         screen.blit(coin, (5, 5))
         fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
@@ -222,7 +231,7 @@ if __name__ == '__main__':
         maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
         screen.blit(maincat, (275, 185))
         rect = maincat.get_rect()
-        connect.close()
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -239,8 +248,7 @@ if __name__ == '__main__':
             screen.blit(maincat, (275, 185))
             pos = pygame.mouse.get_pos()
             screen.blit(coin, (5, 5))
-            screen.blit(string_rendered, intro_rect)
-
+            draw_money()
             meow(maincat, pos)
             pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
             draw_foodsc()

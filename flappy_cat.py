@@ -2,7 +2,7 @@ import pygame
 import os
 import sys
 import random
-from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH
+from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH, earning_money
 import sqlite3
 
 screen = 0
@@ -62,6 +62,7 @@ def end_screen():
         cur.execute('UPDATE bestscores SET bestscore = ? WHERE game = "flappy cat"', (score,))
         connect.commit()
     connect.close()
+    earning_money(screen, score)
     score = 0
     while True:
         for event in pygame.event.get():
