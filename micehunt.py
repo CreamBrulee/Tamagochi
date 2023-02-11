@@ -631,7 +631,7 @@ class menu_lvl:
                 if star > 0:
                     print(star)
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30*1, 30))
+                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30*1, 30*1))
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites.add(sprite_1)
                     sprite_1.rect = x + kol * (j - 1), 265
