@@ -595,7 +595,7 @@ class menu_lvl:
             for j in range(1, 4):
 
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30,30))
+                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30*1,30))
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites.add(sprite_1)
                 sprite_1.rect = x+kol*(j-1), 85
