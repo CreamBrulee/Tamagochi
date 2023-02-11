@@ -5,10 +5,7 @@ import sys
 screen = None
 clock = None
 from button_and_consts import terminate, Button
-con = sqlite3.connect("tamagochi.db")
 
-# Создание курсор
-cur = con.cursor()
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('../Tamagochi/data_micehunt', name)
@@ -59,6 +56,10 @@ ALL_SPRITES_MY_NUMBERS_FOR_LvL = cut_sheet(load_image("numbers_for_LvL.png"), 5,
 
 class tablet_win_or_defeat:
     def __init__(self, width, height, win, lvl, stars):
+        self.con = sqlite3.connect("mice.db")
+
+        # Создание курсор
+        self.cur = self.con.cursor()
         self.width = width
         self.win = win
         if stars >= 130:
@@ -117,6 +118,9 @@ class tablet_win_or_defeat:
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites.add(sprite_1)
                 sprite_1.rect = 306 + kol * i, 140
+
+            self.cur.execute('UPDATE micehunt_bestscores SET stars = ? WHERE level = ?', (self.stars, self.lvl,))
+            self.con.commit()
         else:
             sprite_1 = pygame.sprite.Sprite()
             sprite_1.image = load_image('defeat_fon.png')
@@ -479,6 +483,10 @@ class Board:
 
 class menu_lvl:
     def __init__(self, width, height):
+        self.con = sqlite3.connect("mice.db")
+
+        # Создание курсор
+        self.cur = self.con.cursor()
         self.width = width
         self.height = height
         self.board = [['.'] * width for _ in range(height)]
@@ -575,6 +583,63 @@ class menu_lvl:
         sprite_1.rect = sprite_1.image.get_rect()
         sprites.add(sprite_1)
         sprite_1.rect = 360 + 150 + 20, 295 + 20
+        kol = 30
+        x = 175
+        level = 1
+        star = 0
+        for i in range(1, 4):
+            result = self.cur.execute("""SELECT stars FROM micehunt_bestscores
+                                        WHERE level = ?""", (level,)).fetchall()
+
+            star = int(result[0][0])
+            for j in range(1, 4):
+
+                sprite_1 = pygame.sprite.Sprite()
+                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30*1,30))
+                sprite_1.rect = sprite_1.image.get_rect()
+                sprites.add(sprite_1)
+                sprite_1.rect = x+kol*(j-1), 85
+
+                if star > 0:
+                    print(star)
+                    sprite_1 = pygame.sprite.Sprite()
+                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30, 30))
+                    sprite_1.rect = sprite_1.image.get_rect()
+                    sprites.add(sprite_1)
+                    sprite_1.rect = x + kol * (j - 1), 85
+                    star -= 1
+            x += 180
+            level += 1
+
+        kol = 30
+        x = 175
+        level = 3
+        star = 0
+        for i in range(1, 4):
+            result = self.cur.execute("""SELECT stars FROM micehunt_bestscores
+                                                WHERE level = ?""", (level,)).fetchall()
+
+            star = int(result[0][0])
+            for j in range(1, 4):
+
+                sprite_1 = pygame.sprite.Sprite()
+                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30, 30))
+                sprite_1.rect = sprite_1.image.get_rect()
+                sprites.add(sprite_1)
+                sprite_1.rect = x + kol * (j - 1), 265
+
+                if star > 0:
+                    print(star)
+                    sprite_1 = pygame.sprite.Sprite()
+                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30*1, 30*1))
+                    sprite_1.rect = sprite_1.image.get_rect()
+                    sprites.add(sprite_1)
+                    sprite_1.rect = x + kol * (j - 1), 265
+                    star -= 1
+            x += 180
+            level += 1
+
+
 
     def get_click(self, mouse_pos):
         if type(self.get_cell(mouse_pos)) == int and 1 <= self.get_cell(mouse_pos) <= 6:
