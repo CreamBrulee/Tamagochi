@@ -1,3 +1,5 @@
+import datetime
+import sqlite3
 import sys
 
 import pygame
@@ -5,6 +7,7 @@ import pygame
 FPS = 50
 WIDTH = 800
 HEIGHT = 550
+perc = 0
 
 
 class Button:
@@ -33,6 +36,12 @@ class Button:
 
 
 def terminate():
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    cur.execute('''UPDATE scales SET date = ?,
+     percentage = ? WHERE scale = "food"''', (datetime.datetime.now(), perc))
+    connect.commit()
+    connect.close()
     pygame.quit()
     sys.exit()
 

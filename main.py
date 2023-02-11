@@ -5,7 +5,7 @@ import pygame
 
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
-from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
+from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate, perc
 import flappy_cat
 import micehunt
 import datetime
@@ -182,7 +182,11 @@ def meow(cat, pos):
 def draw_foodsc():
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
-    coins = cur.execute('''SELECT coins from money''').fetchone()[0]
+    date = cur.execute('''SELECT date from scales''').fetchone()[0]
+    percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
+    diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    time = diff.days * 24 * 60
+    connect.close()
 
 
 if __name__ == '__main__':
@@ -238,7 +242,7 @@ if __name__ == '__main__':
             screen.blit(string_rendered, intro_rect)
 
             meow(maincat, pos)
-            pygame.draw.rect(screen, (255, 255, 255), (300, 5, 90, 100))
+            pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
             draw_foodsc()
             screen.blit(food_scale, (300, 5))
             pygame.display.flip()
