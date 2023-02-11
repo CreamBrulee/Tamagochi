@@ -7,7 +7,7 @@ clock = None
 from button_and_consts import terminate, Button
 con = sqlite3.connect("tamagochi.db")
 
-# Создание курсор
+# Создание курсора
 cur = con.cursor()
 
 def load_image(name, colorkey=None):
