@@ -15,7 +15,7 @@ import datetime
 cat1group = pygame.sprite.Group()
 startsc_buttons = pygame.sprite.Group()
 catgroup = pygame.sprite.Group()
-
+coins_gr = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
@@ -97,23 +97,20 @@ def draw_fon():
     fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-maincat = AnimatedSprite(pygame.transform.scale(load_image('spritesheet_maincat.png'), (1250, 750)), 5, 3, 275, 185, catgroup)
-k = 0
+
+maincat = AnimatedSprite(pygame.transform.scale(load_image('spritesheet_maincat.png'), (1250, 750)), 5, 3, 275, 185,
+                         catgroup)
+
 
 def draw_maincat():
-    global k
-    if not k % 2:
-        maincat.update()
+    maincat.update()
     catgroup.draw(screen)
-    k += 1
     meow(maincat, pygame.mouse.get_pos())
     print(9)
 
 
 def draw_foodsc():
     pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
-
-
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
@@ -127,7 +124,13 @@ def draw_foodsc():
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
 
+
+coin = AnimatedSprite(pygame.transform.scale(load_image('money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
+k = 0
+
+
 def draw_money():
+    global k
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
     coins = cur.execute('''SELECT coins from money''').fetchone()[0]
@@ -137,13 +140,17 @@ def draw_money():
     intro_rect.topleft = (80, 5)
     screen.blit(string_rendered, intro_rect)
     connect.close()
-    coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
-    screen.blit(coin, (5, 5))
+    if not k % 2:
+        coin.update()
+    coins_gr.draw(screen)
+    k += 1
+
 
 def extra_screen():
     pygame.draw.rect(screen, (255, 255, 255), (40, 40, 720, 470))
     quitb2 = Button(720, 40, load_image('cross.png'), (40, 40), screen)
     return quitb2
+
 
 def extra_screen_food_and_clothes():
     pygame.draw.rect(screen, (255, 255, 255), (40, 400, 720, 110))
@@ -227,13 +234,14 @@ def food_screen():
                     if i.draw():
                         pygame.mixer.Sound('sound_data/click.mp3').play()
                         print(1)
-                        if int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) +5>=100:
+                        if int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) + 5 >= 100:
                             cur_scale_food.execute('UPDATE scales SET percentage = ?',
                                                    (100,))
                         else:
                             cur_scale_food.execute('UPDATE scales SET percentage = ?',
-                                          (int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) +
-                                           +5,))
+                                                   (int(cur_scale_food.execute(
+                                                       """SELECT percentage FROM scales""").fetchall()[0][0]) +
+                                                    +5,))
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute("""SELECT have FROM food
                                     WHERE name = ?""", (i.name_for_food,)).fetchall()[0][0]) - 1, i.name_for_food))
                         con.commit()
@@ -298,7 +306,8 @@ def shop_screen():
     kol = 0
     cost_of_food = ['5', '3', '4', '2', '5', '7']
     costs_of_food_with_names = {'burger': 5, 'chese': 3, 'chicken': 4, 'egg': 2, 'fish': 5, 'peach': 7}
-    costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'choker_green': 30, 'fartyk': 89, 'hair': 50, 'hat': 35, 'jevelery': 40, 'nose' : 15}
+    costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'choker_green': 30, 'fartyk': 89, 'hair': 50,
+                                   'hat': 35, 'jevelery': 40, 'nose': 15}
 
     for i in range(6):
         kol += 1
@@ -309,9 +318,10 @@ def shop_screen():
     kol = 0
     for key, volume in costs_of_clothes_with_names.items():
         if kol < 6:
-            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (70, 70)), (85 + 110 * (kol), 240))
+            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (70, 70)),
+                        (85 + 110 * (kol), 240))
             buttons_buy.append(Button(75 + 110 * (kol), 320, buy, (70, 40), screen, key))
-            #screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
+            # screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
             #            (145 + 110 * (kol - 1), 165))
         kol += 1
     while True:
@@ -346,7 +356,8 @@ def shop_screen():
                     result = cur.execute("""SELECT have FROM food
                                 WHERE name = ?""", (food[index],)).fetchall()[0][0]
                     cur_money.execute('UPDATE money SET coins = ?',
-                                      (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) - costs_of_food_with_names[button.name_for_food],))
+                                      (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) -
+                                       costs_of_food_with_names[button.name_for_food],))
 
                     if int(result) != 0:
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(result) + 1, food[index]))
@@ -364,12 +375,17 @@ clicked = False
 
 def meow(cat, pos):
     global clicked
+    smile = pygame.transform.scale(load_image('smile.png'), (250, 250))
     r = cat.get_rect()
     r.topleft = (275, 185)
     if r.collidepoint(pos):
         if pygame.mouse.get_pressed()[0] and not clicked:
             clicked = True
             pygame.mixer.Sound('sound_data/gameover.mp3').play()
+            for i in range(10):
+                screen.blit(smile, (275, 185))
+                pygame.display.flip()
+                clock.tick(FPS)
     if not pygame.mouse.get_pressed()[0]:
         clicked = False
 
@@ -390,7 +406,6 @@ if __name__ == '__main__':
         foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
         clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
         shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
-
 
         while True:
             for event in pygame.event.get():
