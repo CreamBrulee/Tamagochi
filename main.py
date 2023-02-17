@@ -12,8 +12,10 @@ import micehunt
 import button_and_consts
 import datetime
 
-all_sprites = pygame.sprite.Group()
+cat1group = pygame.sprite.Group()
 startsc_buttons = pygame.sprite.Group()
+catgroup = pygame.sprite.Group()
+
 
 
 def load_image(name, colorkey=None):
@@ -31,13 +33,13 @@ def load_image(name, colorkey=None):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
     else:
-        image = image.convert_alpha()
+        image = image
     return image
 
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(all_sprites)
+    def __init__(self, sheet, columns, rows, x, y, group):
+        super().__init__(group)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
@@ -57,6 +59,9 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
 
+    def get_rect(self):
+        return self.rect
+
 
 def start_screen():
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
@@ -65,9 +70,9 @@ def start_screen():
     screen.blit(imagel, (10, 20))
     startb = Button(50, 220, load_image('start.png'), (250, 75), screen)
     quitb = Button(50, 305, load_image('quit.png'), (250, 75), screen)
-    cat = AnimatedSprite(pygame.transform.scale(load_image('cat1.png'), (600, 300)), 2, 1, 460, 80)
+    cat = AnimatedSprite(pygame.transform.scale(load_image('cat1.png'), (600, 300)), 2, 1, 460, 80, cat1group)
     i = 1
-    all_sprites.draw(screen)
+    cat1group.draw(screen)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,8 +81,9 @@ def start_screen():
             screen.blit(fon, (0, 0))
             screen.blit(imagel, (10, 20))
             cat.update()
-            all_sprites.draw(screen)
+            cat1group.draw(screen)
         if startb.draw():
+            cat.kill()
             return True
         if quitb.draw():
             terminate()
@@ -91,10 +97,17 @@ def draw_fon():
     fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
+maincat = AnimatedSprite(pygame.transform.scale(load_image('spritesheet_maincat.png'), (1250, 750)), 5, 3, 275, 185, catgroup)
+k = 0
+
 def draw_maincat():
-    maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
-    screen.blit(maincat, (275, 185))
+    global k
+    if not k % 2:
+        maincat.update()
+    catgroup.draw(screen)
+    k += 1
     meow(maincat, pygame.mouse.get_pos())
+    print(9)
 
 
 def draw_foodsc():
@@ -231,43 +244,7 @@ def food_screen():
         draw_maincat()
         extra_screen_food_and_clothes()
         if q.draw():
-            food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
-            screen.blit(food_scale, (300, 5))
-
-            coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
-            screen.blit(coin, (5, 5))
-            fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
-            screen.blit(fon, (0, 0))
-            gamesb = Button(72, 450, load_image('games.png'), (110, 110), screen)
-            foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
-            clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
-            shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
-            maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
-            screen.blit(maincat, (275, 185))
-            rect = maincat.get_rect()
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        terminate()
-                screen.blit(fon, (0, 0))
-                if gamesb.draw():
-                    game_screen()
-                if foodb.draw():
-                    food_screen()
-                if clothesb.draw():
-                    clothes_screen()
-                if shopb.draw():
-                    shop_screen()
-                screen.blit(maincat, (275, 185))
-                pos = pygame.mouse.get_pos()
-                screen.blit(coin, (5, 5))
-                draw_money()
-                meow(maincat, pos)
-                pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
-                draw_foodsc()
-                screen.blit(food_scale, (300, 5))
-                pygame.display.flip()
-                clock.tick(FPS)
+            return
         pygame.display.flip()
         clock.tick(FPS)
         q = extra_screen_food_and_clothes()
@@ -428,9 +405,11 @@ if __name__ == '__main__':
                 clothes_screen()
             if shopb.draw():
                 shop_screen()
-            draw_maincat()
+
             draw_money()
 
             draw_foodsc()
+            draw_maincat()
+            print(3)
             pygame.display.flip()
             clock.tick(FPS)
