@@ -90,13 +90,15 @@ def main():
     fontt = pygame.font.Font(None, 80)
     bird = pygame.Rect(200, y, 50, 50)
     imgbird = pygame.transform.scale(load_image('data/cat.png'), (70, 70))
-    imgtrubs = pygame.transform.scale(load_image('data/true_fver.png'), (50, 200))
-    imgtrubs1 = pygame.transform.scale(load_image('data/true_sniz.png'), (50, 200))
+    imgtrubs = pygame.transform.scale(load_image('data/true_fver.png'), (50, 300))
+    imgtrubs1 = pygame.transform.scale(load_image('data/true_sniz.png'), (50, 300))
     imgfon = pygame.transform.scale(load_image('data/fon1.png'), (180, 560))
     trubs = []
     cadrs = 0
     fonk = []
     scores = []
+    trubgs = 200
+    trubgp = 550 // 2
     level = 3
     fonk.append(pygame.Rect(0, 0, 170, 560))
     fonk.append(pygame.Rect(170, 0, 170, 560))
@@ -166,8 +168,13 @@ def main():
                 v1 = v1 + v2
                 bird.y = y
             if len(trubs) == 0 or trubs[-1].x < 550:
-                trubs.append(pygame.Rect(800, -random.randint(0, 55), 50, 200))
-                trubs.append(pygame.Rect(800, random.randint(350, 450), 50, 200))
+                trubs.append(pygame.Rect(800, 0, 50, trubgp - trubgs // 2))
+                trubs.append(pygame.Rect(800, trubgp + trubgs // 2, 50, 550 - trubgp + trubgs // 2))
+                trubgp += random.randint(-100, 100)
+                if trubgp < trubgs:
+                    trubgp = trubgs
+                elif trubgp > 550 - trubgs:
+                    trubgp = 550 - trubgs
             if bird.top < 0 or bird.bottom > 540:
                 begin = 2
             for t in trubs:
