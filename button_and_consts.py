@@ -40,13 +40,16 @@ def earning_money(screen, money):
 
 
 class Button:
-    def __init__(self, x, y, image, sizes, screen):
+    def __init__(self, x, y, image, sizes, screen, name_for_food=None, music=True):
+        self.name_for_food = name_for_food
         self.image = pygame.transform.scale(image, sizes)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.sizes = sizes
         self.clicked = False
-        self.click = pygame.mixer.Sound('sound_data/click.mp3')
+        self.music = music
+        if self.music:
+            self.click = pygame.mixer.Sound('sound_data/click.mp3')
         self.screen = screen
 
     def draw(self):
@@ -56,7 +59,8 @@ class Button:
             if pygame.mouse.get_pressed()[0] and not self.clicked:
                 self.clicked = True
                 action = True
-                self.click.play()
+                if self.music:
+                    self.click.play()
         if not pygame.mouse.get_pressed()[0]:
             self.clicked = False
 
