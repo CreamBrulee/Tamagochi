@@ -97,7 +97,7 @@ def main():
     cadrs = 0
     fonk = []
     scores = []
-    trubgs = 200
+    trubgs = 160
     trubgp = 550 // 2
     level = 3
     fonk.append(pygame.Rect(0, 0, 170, 560))
@@ -107,6 +107,7 @@ def main():
     fonk.append(pygame.Rect(680, 0, 170, 560))
     y = 200
     v1 = 0
+    r = 0
     v2 = 2
     begin = 0
     running = True
@@ -168,9 +169,13 @@ def main():
                 v1 = v1 + v2
                 bird.y = y
             if len(trubs) == 0 or trubs[-1].x < 550:
+                r += 1
                 trubs.append(pygame.Rect(800, 0, 50, trubgp - trubgs // 2))
                 trubs.append(pygame.Rect(800, trubgp + trubgs // 2, 50, 550 - trubgp + trubgs // 2))
-                trubgp += random.randint(-100, 100)
+                if r % 2 == 0:
+                    trubgp += random.randrange(20, 100, 10)
+                if r % 2 == 1:
+                    trubgp += random.randrange(-80, 0, 10)
                 if trubgp < trubgs:
                     trubgp = trubgs
                 elif trubgp > 550 - trubgs:
