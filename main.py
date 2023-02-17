@@ -2,11 +2,11 @@ import os
 import sqlite3
 import sys
 import pygame
-import glob
-import csv
+
+import button_and_consts
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
-from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
+from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate, perc
 import flappy_cat
 import micehunt
 import button_and_consts
@@ -21,6 +21,8 @@ def load_image(name, colorkey=None):
         fullname = os.path.join('data', name)
     else:
         fullname = name
+    if not name.split('/')[0] == 'data':
+        fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -134,106 +136,14 @@ def game_screen():
 
 def food_screen():
     q = extra_screen()
-
-    con = sqlite3.connect("clothes_and_food.db")
-
-    # Создание курсора
-    cur = con.cursor()
-    con_scale_food = sqlite3.connect("tamagochi.db")
-
-    # Создание курсора
-    cur_scale_food = con_scale_food.cursor()
-    result = cur.execute("""SELECT name, have FROM food""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))
-    names = []
-    buttons_food = []
-    for i in result:
-        names.append(i[0])
-    kol = 0
-    for i in names:
-        kol += 1
-        buttons_food.append(
-            Button(85 + 110 * (kol - 1), 80, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
-
-    for i in buttons_food:
-        i.draw()
-
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for i in buttons_food:
-                    print(1)
-                    if i.draw():
-                        pygame.mixer.Sound('sound_data/click.mp3').play()
-                        print(1)
-                        if int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) +5>=100:
-                            cur_scale_food.execute('UPDATE scales SET percentage = ?',
-                                                   (100,))
-                        else:
-                            cur_scale_food.execute('UPDATE scales SET percentage = ?',
-                                          (int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) +
-                                           +5,))
-                        cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute("""SELECT have FROM food
-                                    WHERE name = ?""", (i.name_for_food,)).fetchall()[0][0]) - 1, i.name_for_food))
-                        con.commit()
-                        con_scale_food.commit()
         if q.draw():
-            food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
-            screen.blit(food_scale, (300, 5))
-
-            coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
-            screen.blit(coin, (5, 5))
-            fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
-            screen.blit(fon, (0, 0))
-            gamesb = Button(72, 450, load_image('games.png'), (110, 110), screen)
-            foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
-            clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
-            shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
-            maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
-            screen.blit(maincat, (275, 185))
-            rect = maincat.get_rect()
-
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        terminate()
-                screen.blit(fon, (0, 0))
-                if gamesb.draw():
-                    game_screen()
-                if foodb.draw():
-                    food_screen()
-                if clothesb.draw():
-                    clothes_screen()
-                if shopb.draw():
-                    shop_screen()
-                screen.blit(maincat, (275, 185))
-                pos = pygame.mouse.get_pos()
-                screen.blit(coin, (5, 5))
-                draw_money()
-                meow(maincat, pos)
-                pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
-                draw_foodsc()
-                screen.blit(food_scale, (300, 5))
-                pygame.display.flip()
-                clock.tick(FPS)
+            return
         pygame.display.flip()
         clock.tick(FPS)
-        q = extra_screen()
-        result = cur.execute("""SELECT name, have FROM food""").fetchall()
-        result = list(filter(lambda item: int(item[1]), result))
-        names = []
-        buttons_food = []
-        for i in result:
-            names.append(i[0])
-        kol = 0
-        for i in names:
-            kol += 1
-            buttons_food.append(
-                Button(85 + 110 * (kol - 1), 80, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
-        for i in buttons_food:
-            i.draw()
 
 
 def clothes_screen():
@@ -250,79 +160,12 @@ def clothes_screen():
 
 def shop_screen():
     q = extra_screen()
-    con = sqlite3.connect("clothes_and_food.db")
-
-    # Создание курсора
-    cur = con.cursor()
-    con_money = sqlite3.connect("tamagochi.db")
-
-    # Создание курсора
-    cur_money = con_money.cursor()
-
-    buttons_buy = []
-    food = ['burger', 'chese', 'chicken', 'egg', 'fish', 'peach']
-    buy = pygame.transform.scale(load_image('buy.PNG'), (
-        70, 40))
-    kol = 0
-    cost_of_food = ['5', '3', '4', '2', '5', '7']
-    costs_of_food_with_names = {'burger': 5, 'chese': 3, 'chicken': 4, 'egg': 2, 'fish': 5, 'peach': 7}
-    costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'choker_green': 30, 'fartyk': 89, 'hair': 50, 'hat': 35, 'jevelery': 40, 'nose' : 15}
-
-    for i in range(6):
-        kol += 1
-        screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (70, 70)), (85 + 110 * (i), 80))
-        buttons_buy.append(Button(75 + 110 * (kol - 1), 160, buy, (70, 40), screen, food[i]))
-        screen.blit(pygame.transform.scale(load_image('costs/' + cost_of_food[i] + '.png'), (35, 35)),
-                    (145 + 110 * (kol - 1), 165))
-    kol = 0
-    for key, volume in costs_of_clothes_with_names.items():
-        if kol < 6:
-            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (70, 70)), (85 + 110 * (kol), 240))
-            buttons_buy.append(Button(75 + 110 * (kol), 320, buy, (70, 40), screen, key))
-            #screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
-            #            (145 + 110 * (kol - 1), 165))
-        kol += 1
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
         if q.draw():
             return
-        kol = 0
-        for i in range(6):
-            kol += 1
-            screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (70, 70)),
-                        (85 + 110 * (i), 80))
-        for i in range(len(buttons_buy)):
-            button = buttons_buy[i]
-            index = i
-            if button.draw():
-                result = int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0])
-                if costs_of_food_with_names[button.name_for_food] > result:
-                    q = extra_screen()
-                    screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
-                                (0, 0))
-                    while True:
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                terminate()
-                        if q.draw():
-                            return
-                        pygame.display.flip()
-                        clock.tick(FPS)
-                else:
-                    result = cur.execute("""SELECT have FROM food
-                                WHERE name = ?""", (food[index],)).fetchall()[0][0]
-                    cur_money.execute('UPDATE money SET coins = ?',
-                                      (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) - costs_of_food_with_names[button.name_for_food],))
-
-                    if int(result) != 0:
-                        cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(result) + 1, food[index]))
-                    else:
-                        cur.execute('UPDATE food SET have = ? WHERE name = ?', (1, food[index]))
-                    con_money.commit()
-                    con.commit()
-
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -345,26 +188,7 @@ def meow(cat, pos):
 def draw_foodsc():
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
-    date = cur.execute('''SELECT date from scales''').fetchone()[0]
-    percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
-    diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    time = diff.seconds // 60
-    x = 100 - (100 * (percents - 0.84 * time) // 100 if (percents - 0.84 * time) > 0 else 0)
-    button_and_consts.perc = percents - 0.14 * time
-    pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
-    connect.close()
-
-
-def draw_money():
-    connect = sqlite3.connect('tamagochi.db')
-    cur = connect.cursor()
     coins = cur.execute('''SELECT coins from money''').fetchone()[0]
-    font = pygame.font.Font(None, 100)
-    string_rendered = font.render(str(coins), 1, pygame.Color('white'))
-    intro_rect = string_rendered.get_rect()
-    intro_rect.topleft = (80, 5)
-    screen.blit(string_rendered, intro_rect)
-    connect.close()
 
 
 if __name__ == '__main__':
@@ -381,8 +205,15 @@ if __name__ == '__main__':
     if a:
         food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
         screen.blit(food_scale, (300, 5))
-
+        connect = sqlite3.connect('tamagochi.db')
+        cur = connect.cursor()
+        coins = cur.execute('''SELECT coins from money''').fetchone()[0]
         coin = pygame.transform.scale(load_image('coin.png'), (70, 70))
+        font = pygame.font.Font(None, 100)
+        string_rendered = font.render(str(coins), 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.topleft = (80, 5)
+        screen.blit(string_rendered, intro_rect)
         screen.blit(coin, (5, 5))
         fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
         screen.blit(fon, (0, 0))
@@ -393,7 +224,7 @@ if __name__ == '__main__':
         maincat = pygame.transform.scale(load_image('maincat.png'), (250, 250))
         screen.blit(maincat, (275, 185))
         rect = maincat.get_rect()
-
+        connect.close()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -410,9 +241,10 @@ if __name__ == '__main__':
             screen.blit(maincat, (275, 185))
             pos = pygame.mouse.get_pos()
             screen.blit(coin, (5, 5))
-            draw_money()
+            screen.blit(string_rendered, intro_rect)
+
             meow(maincat, pos)
-            pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
+            pygame.draw.rect(screen, (255, 255, 255), (300, 5, 90, 100))
             draw_foodsc()
             screen.blit(food_scale, (300, 5))
             pygame.display.flip()
