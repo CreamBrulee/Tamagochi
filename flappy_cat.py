@@ -96,6 +96,7 @@ def main():
     cadrs = 0
     fonk = []
     scores = []
+    level = 3
     fonk.append(pygame.Rect(0, 0, 170, 560))
     fonk.append(pygame.Rect(170, 0, 170, 560))
     fonk.append(pygame.Rect(340, 0, 170, 560))
@@ -113,7 +114,7 @@ def main():
     m = 1
     for i in range(len(fonk) - 1, -1, -1):
         bob = fonk[i]
-        bob.x -= 1
+        bob.x -= level // 2
         if bob.right < 0:
             fonk.remove(bob)
         if fonk[-1].right <= 800:
@@ -148,7 +149,7 @@ def main():
         if st and st1:
             for i in range(len(trubs) - 1, -1, -1):
                 i1 = trubs[i]
-                i1.x -= 3
+                i1.x -= level
                 if i1.right < 0:
                     trubs.remove(i1)
                     if i1 in scores:
@@ -174,6 +175,7 @@ def main():
                 if t.right < bird.left and t not in scores:
                     scores.append(t)
                     score += 0.5
+                    level = 3 + score // 5
         if begin == 2:
             r = 255
             st = False
