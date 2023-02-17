@@ -4,7 +4,7 @@ import random
 import pygame
 import os
 import sys
-from button_and_consts import WIDTH, HEIGHT, FPS, terminate, Button
+from button_and_consts import WIDTH, HEIGHT, FPS, terminate, Button, earning_money
 import sqlite3
 
 
@@ -75,6 +75,7 @@ def end_screen():
         cur.execute('UPDATE bestscores SET bestscore = ? WHERE game = "catch food"', (score,))
         connect.commit()
     connect.close()
+    earning_money(screen, score // 3 if score >= 3 else 1)
     score = 0
     while True:
         for event in pygame.event.get():
@@ -178,7 +179,7 @@ def catchfoodgamef():
             cat.go_left()
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             cat.go_right()
-        if not k % 80:
+        if not k % 40:
             Food()
         k += 1
         screen.blit(fon, (0, 0))
