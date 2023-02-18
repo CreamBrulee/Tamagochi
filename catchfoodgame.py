@@ -75,7 +75,7 @@ def end_screen():
         cur.execute('UPDATE bestscores SET bestscore = ? WHERE game = "catch food"', (score,))
         connect.commit()
     connect.close()
-    earning_money(screen, score // 3 if score >= 3 else 1)
+    earning_money(screen, score // 3 if score >= 3 or score == 0 else 1)
     score = 0
     while True:
         for event in pygame.event.get():
@@ -119,6 +119,7 @@ class Catplayer(pygame.sprite.Sprite):
         self.image = Catplayer.image2
         self.mask = pygame.mask.from_surface(self.image)
 
+moving = 1
 
 class Food(pygame.sprite.Sprite):
     images = [pygame.transform.scale(load_image(i), (
@@ -137,8 +138,8 @@ class Food(pygame.sprite.Sprite):
     def update(self, cat):
         global score
         if not pygame.sprite.collide_mask(self, cat):
-            self.rect = self.rect.move(0, 1)
-            if self.rect.bottom == height - 80:
+            self.rect = self.rect.move(0, moving)
+            if self.rect.bottom >= height - 80:
                 if end_screen():
                     return True
         else:
@@ -155,7 +156,8 @@ class Bomb(Food):
 
     def __init__(self):
         super().__init__()
-        self.image = self.bomb
+        print('khjhj')
+        self.image = Bomb.bomb
         self.rect = self.image.get_rect()
         # вычисляем маску для эффективного сравнения
         self.mask = pygame.mask.from_surface(self.image)
@@ -165,8 +167,8 @@ class Bomb(Food):
     def update(self, cat):
         global score
         if not pygame.sprite.collide_mask(self, cat):
-            self.rect = self.rect.move(0, 1)
-            if self.rect.bottom == height - 80:
+            self.rect = self.rect.move(0, moving)
+            if self.rect.bottom >= height - 80:
                 self.kill()
         else:
             if end_screen():
@@ -175,6 +177,7 @@ class Bomb(Food):
 
 
 def catchfoodgamef():
+    global moving
     for i in all_sprites:
         i.kill()
     for i in player:
@@ -205,11 +208,12 @@ def catchfoodgamef():
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             cat.go_right()
         if not k % 170:
-            a = random.randrange(1)
-            if a == 1:
+            f = random.randrange(0, 4)
+            if f == 2:
                 Bomb()
             else:
                 Food()
+            moving += 0.1
         k += 1
         screen.blit(fon, (0, 0))
         player.draw(screen)
