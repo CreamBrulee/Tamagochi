@@ -474,6 +474,16 @@ class Board:
                         if win.krestik.draw():
                             micehunt_f()
                         pygame.display.flip()
+                else:
+                    my_sprite = pygame.sprite.Group()
+                    sprite_1 = pygame.sprite.Sprite()
+                    sprite_1.image = pygame.transform.scale(load_image('try_better.png'), (155, 36))
+                    sprite_1.rect = sprite_1.image.get_rect()
+                    my_sprite.add(sprite_1)
+                    sprite_1.rect = 540, 30
+                    for i in range(300):
+                        my_sprite.draw(screen_for_get_cell)
+                        pygame.display.flip()
         clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
                 (mouse_pos[0] - self.left) // self.cell_size]
         if clicked == '5':
