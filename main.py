@@ -104,7 +104,6 @@ def draw_maincat():
     maincat.update()
     catgroup.draw(screen)
     meow(maincat, pygame.mouse.get_pos())
-    print(9)
 
 
 def draw_foodsc():
@@ -219,7 +218,7 @@ def food_screen():
     for i in names:
         kol += 1
         buttons_food.append(
-            Button(85 + 110 * (kol - 1), 400, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
+            Button(85 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
 
     for i in buttons_food:
         i.draw()
@@ -235,10 +234,8 @@ def food_screen():
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in buttons_food:
-                    print(1)
                     if i.draw():
                         pygame.mixer.Sound('sound_data/click.mp3').play()
-                        print(1)
                         if int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) + 5 >= 100:
                             cur_scale_food.execute('UPDATE scales SET percentage = ?',
                                                    (100,))
@@ -248,7 +245,7 @@ def food_screen():
                                                        """SELECT percentage FROM scales""").fetchall()[0][0]) +
                                                     +5,))
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute("""SELECT have FROM food
-                                    WHERE name = ?""", (i.name_for_food,)).fetchall()[0][0]) - 1, i.name_for_food))
+                                    WHERE name = ?""", (i.name_for_food_or_for_clothes,)).fetchall()[0][0]) - 1, i.name_for_food_or_for_clothes))
                         con.commit()
                         con_scale_food.commit()
 
@@ -266,7 +263,7 @@ def food_screen():
         for i in names:
             kol += 1
             buttons_food.append(
-                Button(85 + 110 * (kol - 1), 400, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
+                Button(85 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
         for i in buttons_food:
             i.draw()
         pygame.display.flip()
@@ -275,17 +272,64 @@ def food_screen():
 
 def clothes_screen():
     q = extra_screen_food_and_clothes()
+
+    con = sqlite3.connect("clothes_and_food.db")
+
+    # Создание курсора
+    cur = con.cursor()
+    con_scale_food = sqlite3.connect("tamagochi.db")
+
+    # Создание курсора
+    cur_scale_food = con_scale_food.cursor()
+    result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
+    result = list(filter(lambda item: int(item[1]), result))
+    print(result)
+    names = []
+    buttons_clothes = []
+    for i in result:
+        names.append(i[0])
+    kol = 0
+    for i in names:
+        kol += 1
+        buttons_clothes.append(
+            Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '.PNG'), (70, 70), screen, i, False))
+
+    for i in buttons_clothes:
+        i.draw()
+
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
         draw_fon()
         draw_money()
         draw_foodsc()
         draw_maincat()
         extra_screen_food_and_clothes()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in buttons_clothes:
+                    if i.draw():
+                        pygame.mixer.Sound('sound_data/click.mp3').play()
+                        print(1)
+
         if q.draw():
             return
+
+        result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
+        result = list(filter(lambda item: int(item[1]), result))
+        print(result)
+        names = []
+        buttons_clothes = []
+        for i in result:
+            names.append(i[0])
+        kol = 0
+        for i in names:
+            kol += 1
+            buttons_clothes.append(
+                Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '.PNG'), (70, 70), screen, i, False))
+
+        for i in buttons_clothes:
+            i.draw()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -308,23 +352,33 @@ def shop_screen():
     kol = 0
     cost_of_food = ['5', '3', '4', '2', '5', '7']
     costs_of_food_with_names = {'burger': 5, 'chese': 3, 'chicken': 4, 'egg': 2, 'fish': 5, 'peach': 7}
-    costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'choker_green': 30, 'fartyk': 89, 'hair': 50,
-                                   'hat': 35, 'jevelery': 40, 'nose': 15}
+    costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'fartyk': 89, 'hair': 50,
+                                   'hat': 35, 'jevelery': 40}
 
     for i in range(6):
         kol += 1
-        screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (70, 70)), (85 + 110 * (i), 80))
+        screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)), (85 + 110 * (i), 80))
         buttons_buy.append(Button(75 + 110 * (kol - 1), 160, buy, (70, 40), screen, food[i]))
-        screen.blit(pygame.transform.scale(load_image('costs/' + cost_of_food[i] + '.png'), (35, 35)),
-                    (145 + 110 * (kol - 1), 165))
+        screen.blit(pygame.transform.scale(load_image('costs/' + cost_of_food[i] + '.png'), (25, 25)),
+                    (80 + 110 * (kol - 1), 125))
+        screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+                    (105 + 110 * (kol - 1), 125))
     kol = 0
     for key, volume in costs_of_clothes_with_names.items():
-        if kol < 6:
-            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (70, 70)),
-                        (85 + 110 * (kol), 240))
-            buttons_buy.append(Button(75 + 110 * (kol), 320, buy, (70, 40), screen, key))
-            # screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
-            #            (145 + 110 * (kol - 1), 165))
+        screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (50, 50)),
+                    (80 + 110 * (kol), 240))
+        first = str(volume)[0]
+        second = str(volume)[1]
+        print(str(volume))
+        screen.blit(pygame.transform.scale(load_image('costs/' + first + '.png'), (25, 25)),
+                        (180 + 110 * (kol - 1), 285))
+        screen.blit(pygame.transform.scale(load_image('costs/' + second + '.png'), (25, 25)),
+                    (205 + 110 * (kol - 1), 285))
+        screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+                    (230 + 110 * (kol - 1), 285))
+        buttons_buy.append(Button(75 + 110 * (kol), 320, buy, (70, 40), screen, key))
+        # screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
+        #            (145 + 110 * (kol - 1), 165))
         kol += 1
     while True:
         for event in pygame.event.get():
@@ -335,39 +389,63 @@ def shop_screen():
         kol = 0
         for i in range(6):
             kol += 1
-            screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (70, 70)),
+            screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)),
                         (85 + 110 * (i), 80))
         for i in range(len(buttons_buy)):
             button = buttons_buy[i]
             index = i
             if button.draw():
                 result = int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0])
-                if costs_of_food_with_names[button.name_for_food] > result:
-                    q = extra_screen()
-                    screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
-                                (0, 0))
-                    while True:
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                terminate()
-                        if q.draw():
-                            return
-                        pygame.display.flip()
-                        clock.tick(FPS)
-                else:
-                    result = cur.execute("""SELECT have FROM food
-                                WHERE name = ?""", (food[index],)).fetchall()[0][0]
-                    cur_money.execute('UPDATE money SET coins = ?',
-                                      (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) -
-                                       costs_of_food_with_names[button.name_for_food],))
-
-                    if int(result) != 0:
-                        cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(result) + 1, food[index]))
+                if button.name_for_food_or_for_clothes in costs_of_food_with_names:
+                    if costs_of_food_with_names[button.name_for_food_or_for_clothes] > result:
+                        q = extra_screen()
+                        screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
+                                    (0, 0))
+                        while True:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    terminate()
+                            if q.draw():
+                                return
+                            pygame.display.flip()
+                            clock.tick(FPS)
                     else:
-                        cur.execute('UPDATE food SET have = ? WHERE name = ?', (1, food[index]))
-                    con_money.commit()
-                    con.commit()
+                        result = cur.execute("""SELECT have FROM food
+                                    WHERE name = ?""", (food[index],)).fetchall()[0][0]
+                        cur_money.execute('UPDATE money SET coins = ?',
+                                          (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) -
+                                           costs_of_food_with_names[button.name_for_food_or_for_clothes],))
 
+                        if int(result) != 0:
+                            cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(result) + 1, food[index]))
+                        else:
+                            cur.execute('UPDATE food SET have = ? WHERE name = ?', (1, food[index]))
+                        con_money.commit()
+                        con.commit()
+                else:
+                    if costs_of_clothes_with_names[button.name_for_food_or_for_clothes] > result:
+                        q = extra_screen()
+                        screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
+                                    (0, 0))
+                        while True:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    terminate()
+                            if q.draw():
+                                return
+                            pygame.display.flip()
+                            clock.tick(FPS)
+                    else:
+                        print(button.name_for_food_or_for_clothes)
+                        result = cur.execute('SELECT have FROM clothes WHERE name = ?', (button.name_for_food_or_for_clothes, )).fetchone()[0]
+                        if result == '0':
+                            cur_money.execute('UPDATE money SET coins = ?',
+                                              (int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0]) -
+                                               costs_of_clothes_with_names[button.name_for_food_or_for_clothes],))
+
+                        cur.execute('UPDATE clothes SET have = ? WHERE name = ?', ('1', button.name_for_food_or_for_clothes))
+                        con_money.commit()
+                        con.commit()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -425,6 +503,5 @@ if __name__ == '__main__':
 
             draw_foodsc()
             draw_maincat()
-            print(3)
             pygame.display.flip()
             clock.tick(FPS)

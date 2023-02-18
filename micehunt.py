@@ -2,6 +2,7 @@ import pygame
 import os
 import sqlite3
 import sys
+
 screen = None
 clock = None
 from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH, earning_money
@@ -94,7 +95,6 @@ class tablet_win_or_defeat:
             sprites.add(sprite_1)
             sprite_1.rect = 0, 0
 
-
             sprite_1 = pygame.sprite.Sprite()
             sprite_1.image = load_image('LvL.png')
             sprite_1.rect = sprite_1.image.get_rect()
@@ -123,16 +123,16 @@ class tablet_win_or_defeat:
                 sprites.add(sprite_1)
                 sprite_1.rect = 306 + kol * i, 140
 
-            result_before = self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
+            result_before = \
+            self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
             self.cur.execute('UPDATE micehunt_bestscores SET stars = ? WHERE level = ?', (self.stars, self.lvl,))
             self.con.commit()
 
             result_after = \
-            self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
+                self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
             if self.first:
                 if result_before < result_after:
-
-                    earning_money(screen, (self.stars - result_before)*3)
+                    earning_money(screen, (self.stars - result_before) * 3)
                 self.first = False
             print('moneeeeey')
 
@@ -144,7 +144,7 @@ class tablet_win_or_defeat:
             sprite_1.rect = 0, 0
 
     def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
+        return self.get_cell(mouse_pos)
 
     def get_cell(self, mouse_pos):
         if self.win:
@@ -168,6 +168,7 @@ class tablet_win_or_defeat:
                             if event1.type == pygame.MOUSEBUTTONDOWN:
                                 if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
                                     running1 = False
+                                    return True
                             if event1.type == pygame.USEREVENT:
                                 kol += 1
                         all_sprites_try = pygame.sprite.Group()
@@ -195,7 +196,8 @@ class tablet_win_or_defeat:
                         if event1.type == pygame.QUIT:
                             terminate()
                         if event1.type == pygame.MOUSEBUTTONDOWN:
-                            board.get_click(screen1, sprites_for_win_or_defeat, event1.pos)
+                            if board.get_click(screen1, sprites_for_win_or_defeat, event1.pos):
+                                return True
                         if event1.type == pygame.USEREVENT:
                             kol += 1
                     all_sprites_try = pygame.sprite.Group()
@@ -204,7 +206,6 @@ class tablet_win_or_defeat:
                     # print(len(all_sprites_try))
                     # all_sprites_try.draw(screen1)
                     pygame.display.flip()
-
 
 
 class Board:
@@ -333,8 +334,8 @@ class Board:
         sprites.draw(screen_for_render)
 
         pygame.draw.rect(screen_for_render, (255, 255, 255), (140, 10, 210, 70))
-        pygame.draw.rect(screen_for_render, (0, 255, 0), (140, 10, 210 - seconds /7, 70))
-        self.now_stars = 210 - seconds /7
+        pygame.draw.rect(screen_for_render, (0, 255, 0), (140, 10, 210 - seconds / 7, 70))
+        self.now_stars = 210 - seconds / 7
         # pygame.display.flip()
 
         sprite_1 = pygame.sprite.Sprite()
@@ -485,26 +486,29 @@ class Board:
                         my_sprite.draw(screen_for_get_cell)
                         pygame.display.flip()
                         clock.tick(FPS)
-        clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
+        try:
+            clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
                 (mouse_pos[0] - self.left) // self.cell_size]
-        if clicked == '5':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '6'
-        if clicked == '6':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '5'
-        if clicked == '1':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '2'
-        if clicked == '2':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '3'
-        if clicked == '3':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '4'
-        if clicked == '4':
-            self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                (mouse_pos[0] - self.left) // self.cell_size] = '1'
+            if clicked == '5':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '6'
+            if clicked == '6':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '5'
+            if clicked == '1':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '2'
+            if clicked == '2':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '3'
+            if clicked == '3':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '4'
+            if clicked == '4':
+                self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                    (mouse_pos[0] - self.left) // self.cell_size] = '1'
+        except IndexError:
+            pass
 
 
 class menu_lvl:
@@ -621,10 +625,10 @@ class menu_lvl:
             for j in range(1, 4):
 
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30*1,30))
+                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30 * 1, 30))
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites.add(sprite_1)
-                sprite_1.rect = x+kol*(j-1), 85
+                sprite_1.rect = x + kol * (j - 1), 85
 
                 if star > 0:
                     sprite_1 = pygame.sprite.Sprite()
@@ -656,14 +660,13 @@ class menu_lvl:
 
                 if star > 0:
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30*1, 30*1))
+                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30 * 1, 30 * 1))
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites.add(sprite_1)
                     sprite_1.rect = x + kol * (j - 1), 265
                     star -= 1
             x += 180
             level += 1
-            
 
         sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('break.png')
@@ -671,8 +674,6 @@ class menu_lvl:
         sprites.add(sprite_1)
 
         sprite_1.rect = 760, 0
-
-
 
     def get_click(self, mouse_pos):
         if type(self.get_cell(mouse_pos)) == int and 1 <= self.get_cell(mouse_pos) <= 6:
@@ -720,7 +721,6 @@ class menu_lvl:
             return 5
         if 150 + 360 <= mouse_pos[0] <= 150 + 360 + 140 and 295 <= mouse_pos[1] <= 295 + 140:
             return 6
-
 
 
 def micehunt_f():
