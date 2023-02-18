@@ -116,7 +116,10 @@ def draw_foodsc():
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds // 60
     x = 100 - ((percents - 0.84 * time) if (percents - 0.84 * time) > 0 else 0)
-    button_and_consts.perc = percents - 0.84 * time
+    button_and_consts.perc = (percents - 0.84 * time) if (percents - 0.84 * time) > 0 else 0
+    if button_and_consts.perc <= 50:
+        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
