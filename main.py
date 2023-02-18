@@ -2,7 +2,6 @@ import os
 import sqlite3
 import sys
 import pygame
-import glob
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
