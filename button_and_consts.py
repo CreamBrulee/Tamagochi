@@ -5,7 +5,7 @@ import sys
 
 import pygame
 
-FPS = 50
+FPS = 60
 WIDTH = 800
 HEIGHT = 550
 perc = 0

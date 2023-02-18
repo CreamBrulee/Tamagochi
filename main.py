@@ -382,10 +382,8 @@ def meow(cat, pos):
         if pygame.mouse.get_pressed()[0] and not clicked:
             clicked = True
             pygame.mixer.Sound('sound_data/gameover.mp3').play()
-            for i in range(10):
-                screen.blit(smile, (275, 185))
-                pygame.display.flip()
-                clock.tick(FPS)
+            screen.blit(smile, (275, 185))
+
     if not pygame.mouse.get_pressed()[0]:
         clicked = False
 

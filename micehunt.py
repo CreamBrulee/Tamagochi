@@ -481,9 +481,10 @@ class Board:
                     sprite_1.rect = sprite_1.image.get_rect()
                     my_sprite.add(sprite_1)
                     sprite_1.rect = 540, 30
-                    for i in range(300):
+                    for i in range(100):
                         my_sprite.draw(screen_for_get_cell)
                         pygame.display.flip()
+                        clock.tick(FPS)
         clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
                 (mouse_pos[0] - self.left) // self.cell_size]
         if clicked == '5':

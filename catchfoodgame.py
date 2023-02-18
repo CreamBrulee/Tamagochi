@@ -149,6 +149,31 @@ class Food(pygame.sprite.Sprite):
             self.kill()
 
 
+class Bomb(Food):
+    bomb = pygame.transform.scale(load_image('data_foodcatch/bomb.png'), (
+        40, 40))
+
+    def __init__(self):
+        super().__init__()
+        self.image = self.bomb
+        self.rect = self.image.get_rect()
+        # вычисляем маску для эффективного сравнения
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x = random.randrange(20, 740)
+        self.rect.y = -40
+
+    def update(self, cat):
+        global score
+        if not pygame.sprite.collide_mask(self, cat):
+            self.rect = self.rect.move(0, 1)
+            if self.rect.bottom == height - 80:
+                self.kill()
+        else:
+            if end_screen():
+                return True
+
+
+
 def catchfoodgamef():
     for i in all_sprites:
         i.kill()
@@ -179,8 +204,12 @@ def catchfoodgamef():
             cat.go_left()
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             cat.go_right()
-        if not k % 40:
-            Food()
+        if not k % 170:
+            a = random.randrange(1)
+            if a == 1:
+                Bomb()
+            else:
+                Food()
         k += 1
         screen.blit(fon, (0, 0))
         player.draw(screen)
