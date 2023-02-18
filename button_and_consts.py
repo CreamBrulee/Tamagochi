@@ -40,8 +40,8 @@ def earning_money(screen, money):
 
 
 class Button:
-    def __init__(self, x, y, image, sizes, screen, name_for_food=None, music=True):
-        self.name_for_food = name_for_food
+    def __init__(self, x, y, image, sizes, screen, name_for_food_or_for_clothes=None, music=True):
+        self.name_for_food_or_for_clothes = name_for_food_or_for_clothes
         self.image = pygame.transform.scale(image, sizes)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
