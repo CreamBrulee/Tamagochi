@@ -3,7 +3,6 @@ import sqlite3
 import sys
 import pygame
 import glob
-import csv
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
@@ -224,7 +223,11 @@ def food_screen():
         i.draw()
 
     while True:
-
+        draw_fon()
+        draw_money()
+        draw_foodsc()
+        draw_maincat()
+        extra_screen_food_and_clothes()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -246,16 +249,11 @@ def food_screen():
                                     WHERE name = ?""", (i.name_for_food,)).fetchall()[0][0]) - 1, i.name_for_food))
                         con.commit()
                         con_scale_food.commit()
-        draw_fon()
-        draw_money()
-        draw_foodsc()
-        draw_maincat()
-        extra_screen_food_and_clothes()
+
+
         if q.draw():
             return
-        pygame.display.flip()
-        clock.tick(FPS)
-        q = extra_screen_food_and_clothes()
+
         result = cur.execute("""SELECT name, have FROM food""").fetchall()
         result = list(filter(lambda item: int(item[1]), result))
         names = []
@@ -269,6 +267,8 @@ def food_screen():
                 Button(85 + 110 * (kol - 1), 400, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
         for i in buttons_food:
             i.draw()
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 def clothes_screen():
