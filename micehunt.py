@@ -474,29 +474,26 @@ class Board:
                         if win.krestik.draw():
                             micehunt_f()
                         pygame.display.flip()
-
-        if 0 <= (mouse_pos[0] - self.top) // self.cell_size <= len(self.board[0]) - 1 and \
-                0 <= (mouse_pos[1] - self.left) // self.cell_size <= len(self.board) - 1:
-            clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
+        clicked = self.board[(mouse_pos[1] - self.top) // self.cell_size][
                 (mouse_pos[0] - self.left) // self.cell_size]
-            if clicked == '5':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '6'
-            if clicked == '6':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '5'
-            if clicked == '1':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '2'
-            if clicked == '2':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '3'
-            if clicked == '3':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '4'
-            if clicked == '4':
-                self.board[(mouse_pos[1] - self.top) // self.cell_size][
-                    (mouse_pos[0] - self.left) // self.cell_size] = '1'
+        if clicked == '5':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '6'
+        if clicked == '6':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '5'
+        if clicked == '1':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '2'
+        if clicked == '2':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '3'
+        if clicked == '3':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '4'
+        if clicked == '4':
+            self.board[(mouse_pos[1] - self.top) // self.cell_size][
+                (mouse_pos[0] - self.left) // self.cell_size] = '1'
 
 
 class menu_lvl:

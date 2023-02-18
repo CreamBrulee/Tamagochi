@@ -218,7 +218,7 @@ def food_screen():
     for i in names:
         kol += 1
         buttons_food.append(
-            Button(85 + 110 * (kol - 1), 80, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
+            Button(85 + 110 * (kol - 1), 400, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
 
     for i in buttons_food:
         i.draw()
@@ -266,7 +266,7 @@ def food_screen():
         for i in names:
             kol += 1
             buttons_food.append(
-                Button(85 + 110 * (kol - 1), 80, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
+                Button(85 + 110 * (kol - 1), 400, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
         for i in buttons_food:
             i.draw()
 
