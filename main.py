@@ -112,18 +112,14 @@ def draw_acssesory():
     cur_scale_food = con_scale_food.cursor()
     result = cur.execute("""SELECT name, have, wearing FROM clothes""").fetchall()
     result = list(filter(lambda item: int(item[1]), result))
-    print(result)
     result = list(filter(lambda item: int(item[2]), result))
-    print(result)
     names = []
     buttons_clothes = []
     for i in result:
         names.append(i[0])
     kol = 0
-    print(names)
     for i in names:
         kol += 1
-        print(1)
         screen.blit(pygame.transform.scale(load_image('clothes/for_cat/' + i + '.png'), (250, 250)), (275, 185))
 
 
@@ -141,9 +137,7 @@ def draw_foodsc_start():
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    print(diff)
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    print(time)
     button_and_consts.perc = percents - 0.01388 * time if percents - 0.01388 * time >= 0 else 0
     x = 100 - button_and_consts.perc
     if button_and_consts.perc <= 50:
@@ -164,7 +158,6 @@ def draw_foodsc():
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    print(time)
     button_and_consts.perc = button_and_consts.perc - time * 0.01388 if button_and_consts.perc - time * 0.01388 >= 0 else 0
     x = 100 - button_and_consts.perc
     if button_and_consts.perc <= 50:
@@ -175,7 +168,6 @@ def draw_foodsc():
     connect.commit()
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
-    print(button_and_consts.perc)
     screen.blit(food_scale, (300, 5))
 
 
@@ -272,8 +264,9 @@ def food_screen():
     for i in names:
         kol += 1
         buttons_food.append(
-            Button(85 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
-
+            Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (50, 50), screen, i, False))
+        screen.blit(pygame.transform.scale(load_image('costs/' + '1' + '.png'), (25, 25)),
+                    (80 + 110 * (kol - 1), 475))
     for i in buttons_food:
         i.draw()
 
@@ -301,16 +294,26 @@ def food_screen():
             return
 
         result = cur.execute("""SELECT name, have FROM food""").fetchall()
+        print(result)
         result = list(filter(lambda item: int(item[1]), result))
-        names = []
+        names = {}
         buttons_food = []
         for i in result:
-            names.append(i[0])
+            names[i[0]] = int(i[1])
         kol = 0
-        for i in names:
+        print(result)
+        for key, volume in names.items():
             kol += 1
             buttons_food.append(
-                Button(85 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (70, 70), screen, i, False))
+                Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + key + '.PNG'), (50, 50), screen, key, False))
+            if volume >= 10:
+                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
+                        (80 + 110 * (kol - 1), 475))
+                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[1] + '.png'), (25, 25)),
+                            (105 + 110 * (kol - 1), 475))
+            else:
+                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
+                            (80 + 110 * (kol - 1), 475))
         for i in buttons_food:
             i.draw()
         pygame.display.flip()
@@ -330,7 +333,6 @@ def clothes_screen():
     cur_scale_food = con_scale_food.cursor()
     result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
     result = list(filter(lambda item: int(item[1]), result))
-    print(result)
     names = []
     buttons_clothes = []
     for i in result:
@@ -369,14 +371,12 @@ def clothes_screen():
                         else:
                             cur.execute('UPDATE clothes SET wearing = 1 WHERE have = 1 AND name = ?', (i.name_for_food_or_for_clothes, ))
                         con.commit()
-                        print(1)
 
         if q.draw():
             return
 
         result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
         result = list(filter(lambda item: int(item[1]), result))
-        print(result)
         names = []
         buttons_clothes = []
         for i in result:
@@ -433,7 +433,6 @@ def shop_screen():
     for key, volume in costs_of_clothes_with_names.items():
         result = cur.execute('SELECT have FROM clothes WHERE name = ?',
                              (key,)).fetchone()[0]
-        print(result)
         if result == '1':
             screen.blit(pygame.transform.scale(load_image('clothes/' + key + '_dark.png'), (50, 50)),
                         (80 + 110 * (kol), 240))
@@ -442,7 +441,6 @@ def shop_screen():
                         (80 + 110 * (kol), 240))
             first = str(volume)[0]
             second = str(volume)[1]
-            print(str(volume))
             screen.blit(pygame.transform.scale(load_image('costs/' + first + '.png'), (25, 25)),
                             (180 + 110 * (kol - 1), 285))
             screen.blit(pygame.transform.scale(load_image('costs/' + second + '.png'), (25, 25)),
@@ -510,7 +508,6 @@ def shop_screen():
                             pygame.display.flip()
                             clock.tick(FPS)
                     else:
-                        print(button.name_for_food_or_for_clothes)
                         result = cur.execute('SELECT have FROM clothes WHERE name = ?', (button.name_for_food_or_for_clothes, )).fetchone()[0]
                         if result == '0':
                             cur_money.execute('UPDATE money SET coins = ?',
@@ -546,7 +543,6 @@ def shop_screen():
         for key, volume in costs_of_clothes_with_names.items():
             result = cur.execute('SELECT have FROM clothes WHERE name = ?',
                                  (key,)).fetchone()[0]
-            print(result)
             if result == '1':
                 screen.blit(pygame.transform.scale(load_image('clothes/' + key + '_dark.png'), (50, 50)),
                             (80 + 110 * (kol), 240))
@@ -555,7 +551,6 @@ def shop_screen():
                             (80 + 110 * (kol), 240))
                 first = str(volume)[0]
                 second = str(volume)[1]
-                print(str(volume))
                 screen.blit(pygame.transform.scale(load_image('costs/' + first + '.png'), (25, 25)),
                             (180 + 110 * (kol - 1), 285))
                 screen.blit(pygame.transform.scale(load_image('costs/' + second + '.png'), (25, 25)),

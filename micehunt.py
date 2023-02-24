@@ -425,6 +425,12 @@ class Board:
     def get_cell(self, screen_for_get_cell, sprites, mouse_pos):
         if 380 <= mouse_pos[0] <= 520 and -25 <= mouse_pos[1] <= 100:
             if self.board == self.lvl_map_correct:
+                pygame.mixer.quit()
+                pygame.mixer.init()
+                pygame.mixer.Sound('sound_data/newscore.wav').play()
+                pygame.mixer.music.load('sound_data/micesound.mp3')
+                pygame.mixer.music.play(-1)
+                pygame.mixer.music.set_volume(0.05)
                 running2 = True
                 win = tablet_win_or_defeat(800, 550, True, self.lvl, self.now_stars)
                 pygame.time.set_timer(pygame.USEREVENT, 100)
@@ -452,6 +458,12 @@ class Board:
                     pygame.display.flip()
             else:
                 if self.now_stars <= 0:
+                    pygame.mixer.quit()
+                    pygame.mixer.init()
+                    pygame.mixer.Sound('sound_data/game_over.wav')
+                    pygame.mixer.music.load('sound_data/micesound.mp3')
+                    pygame.mixer.music.play(-1)
+                    pygame.mixer.music.set_volume(0.05)
                     running2 = True
                     win = tablet_win_or_defeat(800, 550, False, self.lvl, self.now_stars)
                     pygame.time.set_timer(pygame.USEREVENT, 100)
@@ -726,7 +738,7 @@ class menu_lvl:
 def micehunt_f():
     pygame.mixer.music.load('sound_data/micesound.mp3')
     pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.set_volume(0.05)
     board1 = menu_lvl(10, 6)
     running = True
     board1.set_view(50, 65, 70)
