@@ -113,16 +113,17 @@ def draw_foodsc_start():
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    time = diff.seconds + diff.days * 24 * 60 * 60
-    button_and_consts.perc = percents - 0.01388 / 60 * time if percents - 0.01388 * time / 60 >= 0 else 0
+    print(diff)
+    time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
+    print(time)
+    button_and_consts.perc = percents - 0.01388 * time if percents - 0.01388 * time >= 0 else 0
     x = 100 - button_and_consts.perc
     if button_and_consts.perc <= 50:
         feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
-    if time >= 60:
-        cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(), ))
-        connect.commit()
+    cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(), ))
+    connect.commit()
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
@@ -134,19 +135,21 @@ def draw_foodsc():
     cur = connect.cursor()
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    time = diff.seconds + diff.days * 24 * 60 * 60
-    button_and_consts.perc = button_and_consts.perc - time * 0.01388 / 60 if button_and_consts.perc - time * 0.01388 / 60 >= 0 else 0
+    time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
+    print(time)
+    button_and_consts.perc = button_and_consts.perc - time * 0.01388 if button_and_consts.perc - time * 0.01388 >= 0 else 0
     x = 100 - button_and_consts.perc
     if button_and_consts.perc <= 50:
         feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
-    if time >= 60:
-        cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(),))
-        connect.commit()
+    cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(),))
+    connect.commit()
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
+    print(button_and_consts.perc)
     screen.blit(food_scale, (300, 5))
+
 
 coin = AnimatedSprite(pygame.transform.scale(load_image('money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
 k = 0
