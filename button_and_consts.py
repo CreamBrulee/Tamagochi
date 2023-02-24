@@ -8,7 +8,8 @@ import pygame
 FPS = 60
 WIDTH = 800
 HEIGHT = 550
-perc = 0
+perc_food = 0
+perc_sleep = 0
 
 
 def load_image(name, colorkey=None):
@@ -72,7 +73,9 @@ def terminate():
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
     cur.execute('''UPDATE scales SET date = ?,
-     percentage = ? WHERE scale = "food"''', (datetime.datetime.now(), perc))
+     percentage = ? WHERE scale = "food"''', (datetime.datetime.now(), perc_food))
+    cur.execute('''UPDATE scales SET date = ?,
+         percentage = ? WHERE scale = "sleep"''', (datetime.datetime.now(), perc_sleep))
     connect.commit()
     connect.close()
     pygame.quit()

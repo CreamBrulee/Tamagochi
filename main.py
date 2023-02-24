@@ -134,13 +134,13 @@ def draw_foodsc_start():
     pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
-    date = cur.execute('''SELECT date from scales''').fetchone()[0]
-    percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
+    date = cur.execute('''SELECT date from scales WHERE scale = "food"''').fetchone()[0]
+    percents = cur.execute('''SELECT percentage from scales WHERE scale = "food"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc = percents - 0.01388 * time if percents - 0.01388 * time >= 0 else 0
-    x = 100 - button_and_consts.perc
-    if button_and_consts.perc <= 50:
+    button_and_consts.perc_food = percents - 0.01388 * time if percents - 0.01388 * time >= 0 else 0
+    x = 100 - button_and_consts.perc_food
+    if button_and_consts.perc_food <= 50:
         feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
@@ -155,12 +155,12 @@ def draw_foodsc():
     pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
-    date = cur.execute('''SELECT date from scales''').fetchone()[0]
+    date = cur.execute('''SELECT date from scales WHERE scale = "food"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc = button_and_consts.perc - time * 0.01388 if button_and_consts.perc - time * 0.01388 >= 0 else 0
-    x = 100 - button_and_consts.perc
-    if button_and_consts.perc <= 50:
+    button_and_consts.perc_food = button_and_consts.perc_food - time * 0.01388 if button_and_consts.perc_food - time * 0.01388 >= 0 else 0
+    x = 100 - button_and_consts.perc_food
+    if button_and_consts.perc_food <= 50:
         feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
@@ -169,6 +169,47 @@ def draw_foodsc():
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
+
+
+def draw_sleepsc_start():
+    pygame.draw.rect(screen, (0, 255, 150), (400, 5, 90, 100))
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
+    percents = cur.execute('''SELECT percentage from scales WHERE scale = "sleep"''').fetchone()[0]
+    diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
+    button_and_consts.perc_sleep = percents - 0.0023 * time if percents - 0.0023 * time >= 0 else 0
+    x = 100 - button_and_consts.perc_sleep
+    if button_and_consts.perc_sleep <= 50:
+        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        screen.blit(feed, (10, 100))
+    pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
+    cur.execute('''UPDATE scales SET date = ? WHERE scale = "sleep"''', (datetime.datetime.now(), ))
+    connect.commit()
+    connect.close()
+    food_scale = pygame.transform.scale(load_image('sleepsc.png'), (90, 100))
+    screen.blit(food_scale, (400, 5))
+
+
+def draw_sleepsc():
+    pygame.draw.rect(screen, (0, 255, 150), (400, 5, 90, 100))
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
+    diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
+    button_and_consts.perc_sleep = button_and_consts.perc_sleep - time * 0.0023 if button_and_consts.perc_sleep - time * 0.0023 >= 0 else 0
+    x = 100 - button_and_consts.perc_sleep
+    if button_and_consts.perc_sleep <= 50:
+        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        screen.blit(feed, (10, 100))
+    pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
+    cur.execute('''UPDATE scales SET date = ? WHERE scale = "sleep"''', (datetime.datetime.now(),))
+    connect.commit()
+    connect.close()
+    food_scale = pygame.transform.scale(load_image('sleepsc.png'), (90, 100))
+    screen.blit(food_scale, (400, 5))
 
 
 coin = AnimatedSprite(pygame.transform.scale(load_image('money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
@@ -283,7 +324,7 @@ def food_screen():
                 for i in buttons_food:
                     if i.draw():
                         pygame.mixer.Sound('sound_data/click.mp3').play()
-                        button_and_consts.perc = button_and_consts.perc + 5 if button_and_consts.perc + 5 <= 100 else 100
+                        button_and_consts.perc_food = button_and_consts.perc_food + 5 if button_and_consts.perc_food + 5 <= 100 else 100
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute("""SELECT have FROM food
                                     WHERE name = ?""", (i.name_for_food_or_for_clothes,)).fetchall()[0][0]) - 1, i.name_for_food_or_for_clothes))
                         con.commit()
@@ -602,6 +643,7 @@ if __name__ == '__main__':
         clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
         shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
         draw_foodsc_start()
+        draw_sleepsc_start()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -619,6 +661,7 @@ if __name__ == '__main__':
             draw_money()
 
             draw_foodsc()
+            draw_sleepsc()
             draw_maincat()
             pygame.display.flip()
             clock.tick(FPS)
