@@ -14,6 +14,8 @@ height = HEIGHT
 screen = 0
 clock = 0
 score = 0
+hearts = 3
+
 
 
 def load_image(name, colorkey=None):
@@ -27,6 +29,11 @@ def load_image(name, colorkey=None):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
     return image
+
+
+h1 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
+h2 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
+h3 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
 
 
 def start_screen():
@@ -47,7 +54,9 @@ def start_screen():
 
 
 def end_screen():
-    global score
+    global score, moving, hearts
+    moving = 1
+    hearts = 3
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
     bestsc = cur.execute('''SELECT bestscore from bestscores WHERE game = "catch food"''').fetchone()
@@ -81,6 +90,9 @@ def end_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
+        screen.blit(h1, (690, 10))
+        screen.blit(h2, (657, 10))
+        screen.blit(h3, (624, 10))
         if re.draw():
             catchfoodgamef()
         if q.draw():
@@ -136,12 +148,21 @@ class Food(pygame.sprite.Sprite):
         self.rect.y = -40
 
     def update(self, cat):
-        global score
+        global score, hearts, h1, h2, h3
         if not pygame.sprite.collide_mask(self, cat):
             self.rect = self.rect.move(0, moving)
             if self.rect.bottom >= height - 80:
-                if end_screen():
-                    return True
+                hearts -= 1
+                self.kill()
+                print(hearts)
+                if hearts == 2:
+                    h1 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
+                elif hearts == 1:
+                    h2 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
+                else:
+                    h3 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
+                    if end_screen():
+                        return True
         else:
             m = pygame.mixer.Sound('sound_data/catch.wav')
             m.play()
@@ -165,19 +186,22 @@ class Bomb(Food):
         self.rect.y = -40
 
     def update(self, cat):
-        global score
+        global score, h1, h2, h3
         if not pygame.sprite.collide_mask(self, cat):
             self.rect = self.rect.move(0, moving)
             if self.rect.bottom >= height - 80:
                 self.kill()
         else:
+            h1 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
+            h2 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
+            h3 = pygame.transform.scale(load_image('data_foodcatch/heart2.png'), (30, 30))
             if end_screen():
                 return True
 
 
 
 def catchfoodgamef():
-    global moving
+    global moving, h1, h2, h3
     for i in all_sprites:
         i.kill()
     for i in player:
@@ -197,6 +221,12 @@ def catchfoodgamef():
     intro_rect.topleft = (115, 5)
     k = 0
     q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
+    h1 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
+    h2 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
+    h3 = pygame.transform.scale(load_image('data_foodcatch/heart.png'), (30, 30))
+    screen.blit(h1, (690, 10))
+    screen.blit(h2, (657, 10))
+    screen.blit(h3, (624, 10))
     if start_screen():
         return True
     while running:
@@ -224,6 +254,9 @@ def catchfoodgamef():
         screen.blit(sc, (5, 5))
         string_rendered = font.render(str(score), 1, pygame.Color('black'))
         screen.blit(string_rendered, intro_rect)
+        screen.blit(h1, (690, 10))
+        screen.blit(h2, (657, 10))
+        screen.blit(h3, (624, 10))
         if q.draw():
             return True
         pygame.display.flip()
