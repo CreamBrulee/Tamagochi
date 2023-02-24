@@ -83,6 +83,7 @@ def end_screen():
     if sc_image == 'start_end/newscore.png':
         cur.execute('UPDATE bestscores SET bestscore = ? WHERE game = "catch food"', (score,))
         connect.commit()
+        pygame.mixer.Sound('sound_data/newscore.wav').play()
     connect.close()
     earning_money(screen, score // 3 if score >= 3 or score == 0 else 1)
     score = 0
@@ -152,6 +153,7 @@ class Food(pygame.sprite.Sprite):
         if not pygame.sprite.collide_mask(self, cat):
             self.rect = self.rect.move(0, moving)
             if self.rect.bottom >= height - 80:
+                pygame.mixer.Sound('sound_data/missfood.wav').play()
                 hearts -= 1
                 self.kill()
                 print(hearts)
