@@ -106,24 +106,47 @@ def draw_maincat():
     meow(maincat, pygame.mouse.get_pos())
 
 
-def draw_foodsc():
+def draw_foodsc_start():
     pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
     date = cur.execute('''SELECT date from scales''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-    time = diff.seconds // 60
-    x = 100 - ((percents - 0.84 * time) if (percents - 0.84 * time) > 0 else 0)
-    button_and_consts.perc = (percents - 0.84 * time) if (percents - 0.84 * time) > 0 else 0
+    time = diff.seconds + diff.days * 24 * 60 * 60
+    button_and_consts.perc = percents - 0.01388 / 60 * time if percents - 0.01388 * time / 60 >= 0 else 0
+    x = 100 - button_and_consts.perc
     if button_and_consts.perc <= 50:
         feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
+    if time >= 60:
+        cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(), ))
+        connect.commit()
     connect.close()
     food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
 
+
+def draw_foodsc():
+    pygame.draw.rect(screen, (0, 255, 150), (300, 5, 90, 100))
+    connect = sqlite3.connect('tamagochi.db')
+    cur = connect.cursor()
+    date = cur.execute('''SELECT date from scales''').fetchone()[0]
+    diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    time = diff.seconds + diff.days * 24 * 60 * 60
+    button_and_consts.perc = button_and_consts.perc - time * 0.01388 / 60 if button_and_consts.perc - time * 0.01388 / 60 >= 0 else 0
+    x = 100 - button_and_consts.perc
+    if button_and_consts.perc <= 50:
+        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        screen.blit(feed, (10, 100))
+    pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
+    if time >= 60:
+        cur.execute('''UPDATE scales SET date = ? WHERE scale = "food"''', (datetime.datetime.now(),))
+        connect.commit()
+    connect.close()
+    food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
+    screen.blit(food_scale, (300, 5))
 
 coin = AnimatedSprite(pygame.transform.scale(load_image('money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
 k = 0
@@ -236,14 +259,7 @@ def food_screen():
                 for i in buttons_food:
                     if i.draw():
                         pygame.mixer.Sound('sound_data/click.mp3').play()
-                        if int(cur_scale_food.execute("""SELECT percentage FROM scales""").fetchall()[0][0]) + 5 >= 100:
-                            cur_scale_food.execute('UPDATE scales SET percentage = ?',
-                                                   (100,))
-                        else:
-                            cur_scale_food.execute('UPDATE scales SET percentage = ?',
-                                                   (int(cur_scale_food.execute(
-                                                       """SELECT percentage FROM scales""").fetchall()[0][0]) +
-                                                    +5,))
+                        button_and_consts.perc = button_and_consts.perc + 5 if button_and_consts.perc + 5 <= 100 else 100
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute("""SELECT have FROM food
                                     WHERE name = ?""", (i.name_for_food_or_for_clothes,)).fetchall()[0][0]) - 1, i.name_for_food_or_for_clothes))
                         con.commit()
@@ -484,7 +500,7 @@ if __name__ == '__main__':
         foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
         clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
         shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
-
+        draw_foodsc_start()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
