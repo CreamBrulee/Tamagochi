@@ -78,23 +78,10 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
         self.height = height
 
     def render(self, screen_for_render, sprites_for_render):
-        for i in range(0, 800, 70):  # рисуем траву везде
-            for j in range(0, 550, 70):
-                sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = load_image('trava_fon.png')
-                sprite_1.rect = sprite_1.image.get_rect()
-                sprites_for_render.add(sprite_1)
-                sprite_1.rect = i, j
 
         self.krestik = Button(760, 0, load_image('break.png'), (40, 40), screen_for_render)  # рисуем крестик для выхода
 
         if self.win:  # если победили
-            sprite_1 = pygame.sprite.Sprite()  # рисуем фон победы
-            sprite_1.image = load_image('win_fon.png')
-            sprite_1.rect = sprite_1.image.get_rect()
-            sprites_for_render.add(sprite_1)
-            sprite_1.rect = 0, 0
-
             sprite_1 = pygame.sprite.Sprite()  # отрисовываем номер уровня
             sprite_1.image = load_image('LvL.png')
             sprite_1.rect = sprite_1.image.get_rect()
@@ -122,19 +109,6 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = 306 + kol * i, 140
-
-            result_before = \
-                self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
-            self.cur.execute('UPDATE micehunt_bestscores SET stars = ? WHERE level = ?', (self.stars, self.lvl,))
-            self.con.commit()
-
-            result_after = \
-                self.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (self.lvl,)).fetchall()[0][0]
-            if self.first:  # начисляем монетки единственный первый раз
-                if result_before < result_after:
-                    earning_money(screen_for_render, (self.stars - result_before) * 3)
-                self.first = False
-
         else:  # если проиграли отоброжаем экран поражения
             sprite_1 = pygame.sprite.Sprite()
             sprite_1.image = load_image('defeat_fon.png')
@@ -386,6 +360,20 @@ class Board:  # класс для уровня
                 sprites_for_win_or_defeat = pygame.sprite.Group()
                 win.render(screen_for_get_cell, sprites_for_win_or_defeat)
 
+                for i in range(0, 800, 70):  # рисуем траву везде
+                    for j in range(0, 550, 70):
+                        screen_for_get_cell.blit(load_image('trava_fon.png'), (i, j))
+
+                screen_for_get_cell.blit(load_image('win_fon.png'), (0, 0))
+                result_before = \
+                    win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (win.lvl,)).fetchall()[0][0]
+                print(result_before)
+                win.cur.execute('UPDATE micehunt_bestscores SET stars = ? WHERE level = ?', (win.stars, win.lvl,))
+                win.con.commit()
+                earning_money(screen_for_get_cell, (win.stars - result_before) * 3)
+                result_after = \
+                    win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (win.lvl,)).fetchall()[
+                        0][0]
                 while running2:
                     for event1 in pygame.event.get():
                         if event1.type == pygame.QUIT:
@@ -393,8 +381,6 @@ class Board:  # класс для уровня
                         if event1.type == pygame.MOUSEBUTTONDOWN:
                             if win.get_click(event1.pos):
                                 return True
-
-                    screen.fill((215, 125, 49))
                     win.render(screen_for_get_cell, sprites_for_win_or_defeat)
                     sprites_for_win_or_defeat.draw(screen_for_get_cell)
 

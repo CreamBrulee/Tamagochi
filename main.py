@@ -118,13 +118,13 @@ def draw_acssesory():
     # Создание курсора
     cur = con.cursor()
     result = cur.execute("""SELECT name, have, wearing FROM clothes""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))
-    result = list(filter(lambda item: int(item[2]), result))
+    result = list(filter(lambda item: int(item[1]), result))# выбираем те аксессуары которые в наличии
+    result = list(filter(lambda item: int(item[2]), result))# выюираем те аксессуары которы надо надеть
     names = []
     for i in result:
         names.append(i[0])
     kol = 0
-    for i in names:
+    for i in names:# отрисовываем аксессуары
         kol += 1
         screen.blit(pygame.transform.scale(load_image('clothes/for_cat/' + i + '.png'), (250, 250)), (275, 185))
 
@@ -347,19 +347,19 @@ def food_screen():
     cur = con.cursor()
     con_scale_food = sqlite3.connect("tamagochi.db")
     result = cur.execute("""SELECT name, have FROM food""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))
+    result = list(filter(lambda item: int(item[1]), result))# выбираем ту еду которой >= 1
     names = []
     buttons_food = []
     for i in result:
         names.append(i[0])
     kol = 0
-    for i in names:
+    for i in names:# добавляем картинки еды в качетсве кнопок и отрисовываем цены
         kol += 1
         buttons_food.append(
             Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (50, 50), screen, i, False))
         screen.blit(pygame.transform.scale(load_image('costs/' + '1' + '.png'), (25, 25)),
                     (80 + 110 * (kol - 1), 475))
-    for i in buttons_food:
+    for i in buttons_food:# отрисовываем еду
         i.draw()
     while True:
         draw_fon()
@@ -373,9 +373,10 @@ def food_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in buttons_food:
                     if i.draw():
-                        pygame.mixer.Sound('sound_data/click.mp3').play()
+                        pygame.mixer.Sound('sound_data/click.mp3').play() #  издаем звук при нажатии
                         button_and_consts.perc_food = button_and_consts.perc_food + 5 if \
                             button_and_consts.perc_food + 5 <= 100 else 100
+                        # вычитаем одну еду из БД
                         cur.execute('UPDATE food SET have = ? WHERE name = ?', (int(cur.execute(
                             """SELECT have FROM food WHERE name = ?""", (
                                 i.name_for_food_or_for_clothes,)).fetchall()[0][0]) - 1,
@@ -395,6 +396,7 @@ def food_screen():
             kol += 1
             buttons_food.append(
                 Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + key + '.PNG'), (50, 50), screen, key, False))
+            # печатаем цены
             if volume >= 10:
                 screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
                             (80 + 110 * (kol - 1), 475))
@@ -404,7 +406,7 @@ def food_screen():
                 screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
                             (80 + 110 * (kol - 1), 475))
         for i in buttons_food:
-            i.draw()
+            i.draw()#отображаем кнопки
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -420,9 +422,8 @@ def clothes_screen():
     con_scale_food = sqlite3.connect("tamagochi.db")
 
     # Создание курсора
-    cur_scale_food = con_scale_food.cursor()
     result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))
+    result = list(filter(lambda item: int(item[1]), result))#выбираем ту одежду которая куплена
     names = []
     buttons_clothes = []
     for i in result:
@@ -432,15 +433,15 @@ def clothes_screen():
         kol += 1
         result = cur.execute('SELECT wearing FROM clothes WHERE name = ? AND have = 1',
                              (i,)).fetchone()[0]
-        if result == 1:
+        if result == 1:#если одежда одета то рисуем ее темной
             buttons_clothes.append(
                 Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '_dark.PNG'), (70, 70), screen, i, False))
-        else:
+        else:# иначе рисуем ее активной
             buttons_clothes.append(
                 Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '.PNG'), (70, 70), screen, i, False))
 
     for i in buttons_clothes:
-        i.draw()
+        i.draw()#прорисовываем одежду
 
     while True:
         draw_fon()
@@ -454,9 +455,10 @@ def clothes_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in buttons_clothes:
                     if i.draw():
-                        pygame.mixer.Sound('sound_data/click.mp3').play()
+                        pygame.mixer.Sound('sound_data/click.mp3').play() #производим звук
                         result = cur.execute('SELECT wearing FROM clothes WHERE name = ? AND have = 1', (
                             i.name_for_food_or_for_clothes,)).fetchone()[0]
+                        # при нажатии либо снимаем либо одеваем одежду
                         if result == 1:
                             cur.execute('UPDATE clothes SET wearing = 0 WHERE have = 1 AND name = ?', (
                                 i.name_for_food_or_for_clothes, ))
@@ -467,7 +469,7 @@ def clothes_screen():
 
         if q.draw():
             return
-
+        #повторяем то же что и раньше
         result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
         result = list(filter(lambda item: int(item[1]), result))
         names = []
@@ -516,7 +518,7 @@ def shop_screen():
     costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'fartyk': 89, 'hair': 50,
                                    'hat': 35, 'jevelery': 40}
 
-    for i in range(6):
+    for i in range(6):# отрисовываем еду и цены
         kol += 1
         screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)), (85 + 110 * i, 80))
         buttons_buy.append(Button(75 + 110 * (kol - 1), 160, buy, (70, 40), screen, food[i], False))
@@ -525,13 +527,13 @@ def shop_screen():
         screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
                     (105 + 110 * (kol - 1), 125))
     kol = 0
-    for key, volume in costs_of_clothes_with_names.items():
+    for key, volume in costs_of_clothes_with_names.items(): #отрисовываем одежду
         result = cur.execute('SELECT have FROM clothes WHERE name = ?',
                              (key,)).fetchone()[0]
-        if result == '1':
+        if result == '1':#отрисовываем серым если уже куплено
             screen.blit(pygame.transform.scale(load_image('clothes/' + key + '_dark.png'), (50, 50)),
                         (80 + 110 * kol, 240))
-        else:
+        else:#инчае рисуем одежду активной с кнопкой
             screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (50, 50)),
                         (80 + 110 * kol, 240))
             first = str(volume)[0]
@@ -555,16 +557,17 @@ def shop_screen():
         kol = 0
         for i in range(6):
             kol += 1
+            #отрисовываем еду
             screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)),
                         (85 + 110 * i, 80))
         for i in range(len(buttons_buy)):
             button = buttons_buy[i]
             index = i
             if button.draw():
-                pygame.mixer.Sound('sound_data/click.mp3').play()
+                pygame.mixer.Sound('sound_data/click.mp3').play()#производим звук
                 result = int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0])
                 if button.name_for_food_or_for_clothes in costs_of_food_with_names:
-                    if costs_of_food_with_names[button.name_for_food_or_for_clothes] > result:
+                    if costs_of_food_with_names[button.name_for_food_or_for_clothes] > result:#если денег не хватило
                         q = extra_screen()
                         screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
                                     (0, 0))
@@ -576,7 +579,7 @@ def shop_screen():
                                 return
                             pygame.display.flip()
                             clock.tick(FPS)
-                    else:
+                    else:#иначе покупаем еду и добавляем в БД
                         result = cur.execute("""SELECT have FROM food
                                     WHERE name = ?""", (food[index],)).fetchall()[0][0]
                         cur_money.execute('UPDATE money SET coins = ?',
@@ -590,7 +593,7 @@ def shop_screen():
                         con_money.commit()
                         con.commit()
                 else:
-                    if costs_of_clothes_with_names[button.name_for_food_or_for_clothes] > result:
+                    if costs_of_clothes_with_names[button.name_for_food_or_for_clothes] > result: #если денег не хватило соощаем об этом
                         q = extra_screen()
                         screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
                                     (0, 0))
@@ -602,7 +605,7 @@ def shop_screen():
                                 return
                             pygame.display.flip()
                             clock.tick(FPS)
-                    else:
+                    else:#иначе покупаем одежду добавляем в БД и вычитаем деньги
                         result = cur.execute('SELECT have FROM clothes WHERE name = ?', (
                             button.name_for_food_or_for_clothes, )).fetchone()[0]
                         if result == '0':
@@ -617,6 +620,7 @@ def shop_screen():
         extra_screen()
         if q.draw():
             return
+        #повторяем тоже что и раньше
         buttons_buy = []
         food = ['burger', 'chese', 'chicken', 'egg', 'fish', 'peach']
         buy = pygame.transform.scale(load_image('buy.PNG'), (
