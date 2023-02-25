@@ -10,6 +10,7 @@ WIDTH = 800
 HEIGHT = 550
 perc_food = 0
 perc_sleep = 0
+sleeping = 0
 
 
 def load_image(name, colorkey=None):
@@ -76,6 +77,8 @@ def terminate():
      percentage = ? WHERE scale = "food"''', (datetime.datetime.now(), perc_food))
     cur.execute('''UPDATE scales SET date = ?,
          percentage = ? WHERE scale = "sleep"''', (datetime.datetime.now(), perc_sleep))
+    cur.execute('''UPDATE sleep SET issleeping = ? ''', (sleeping, ))
+    print(sleeping)
     connect.commit()
     connect.close()
     pygame.quit()

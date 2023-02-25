@@ -124,10 +124,13 @@ def draw_acssesory():
 
 
 def draw_maincat():
-    maincat.update()
+    if not button_and_consts.sleeping:
+        maincat.update()
     catgroup.draw(screen)
     meow(maincat, pygame.mouse.get_pos())
     draw_acssesory()
+    if button_and_consts.sleeping:
+        screen.blit(pygame.transform.scale(load_image('sleepingcat.png'), (250, 250)), (275, 185))
 
 
 def draw_foodsc_start():
@@ -175,15 +178,19 @@ def draw_sleepsc_start():
     pygame.draw.rect(screen, (0, 255, 150), (400, 5, 90, 100))
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
+    button_and_consts.sleeping = cur.execute('''SELECT issleeping from sleep''').fetchone()[0]
     date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales WHERE scale = "sleep"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc_sleep = percents - 0.0023 * time if percents - 0.0023 * time >= 0 else 0
+    if not button_and_consts.sleeping:
+        button_and_consts.perc_sleep = percents - 0.0023 * time if percents - 0.0023 * time >= 0 else 0
+    else:
+        button_and_consts.perc_sleep = percents + 0.00347 * time if percents + 0.00347 * time <= 100 else 100
     x = 100 - button_and_consts.perc_sleep
     if button_and_consts.perc_sleep <= 50:
-        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
-        screen.blit(feed, (10, 100))
+        feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
+        screen.blit(feed, (10, 160))
     pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
     cur.execute('''UPDATE scales SET date = ? WHERE scale = "sleep"''', (datetime.datetime.now(), ))
     connect.commit()
@@ -199,11 +206,16 @@ def draw_sleepsc():
     date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc_sleep = button_and_consts.perc_sleep - time * 0.0023 if button_and_consts.perc_sleep - time * 0.0023 >= 0 else 0
+    if not button_and_consts.sleeping:
+        button_and_consts.perc_sleep = button_and_consts.perc_sleep - time * 0.0023 if \
+            button_and_consts.perc_sleep - time * 0.0023 >= 0 else 0
+    else:
+        button_and_consts.perc_sleep = button_and_consts.perc_sleep + 0.00347 * time if \
+            button_and_consts.perc_sleep + 0.00347 * time <= 100 else 100
     x = 100 - button_and_consts.perc_sleep
     if button_and_consts.perc_sleep <= 50:
-        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
-        screen.blit(feed, (10, 100))
+        feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
+        screen.blit(feed, (10, 160))
     pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
     cur.execute('''UPDATE scales SET date = ? WHERE scale = "sleep"''', (datetime.datetime.now(),))
     connect.commit()
@@ -619,11 +631,28 @@ def meow(cat, pos):
     if r.collidepoint(pos):
         if pygame.mouse.get_pressed()[0] and not clicked:
             clicked = True
+            button_and_consts.sleeping = 0
             pygame.mixer.Sound('sound_data/gameover.mp3').play()
             screen.blit(smile, (275, 185))
 
     if not pygame.mouse.get_pressed()[0]:
         clicked = False
+
+
+def catsleep():
+    catsl = pygame.transform.scale(load_image('catsleep.png'), (800, 550))
+    screen.blit(catsl, (0, 0))
+    quitb2 = Button(720, 40, load_image('cross.png'), (40, 40), screen)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(catsl, (0, 0))
+        if quitb2.draw():
+            return
+        pygame.display.flip()
+        clock.tick(FPS)
+
 
 
 if __name__ == '__main__':
@@ -642,6 +671,7 @@ if __name__ == '__main__':
         foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
         clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
         shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
+        sleepb = Button(600, 260, load_image('sleepb.png'), (150, 60), screen)
         draw_foodsc_start()
         draw_sleepsc_start()
         while True:
@@ -650,16 +680,28 @@ if __name__ == '__main__':
                     terminate()
             draw_fon()
             if gamesb.draw():
-                game_screen()
+                if not button_and_consts.sleeping:
+                    game_screen()
+                else:
+                    catsleep()
             if foodb.draw():
-                food_screen()
+                if not button_and_consts.sleeping:
+                    food_screen()
+                else:
+                    catsleep()
             if clothesb.draw():
-                clothes_screen()
+                if not button_and_consts.sleeping:
+                    clothes_screen()
+                else:
+                    catsleep()
             if shopb.draw():
-                shop_screen()
-
+                if not button_and_consts.sleeping:
+                    shop_screen()
+                else:
+                    catsleep()
+            if sleepb.draw():
+                button_and_consts.sleeping = 1 if not button_and_consts.sleeping else 0
             draw_money()
-
             draw_foodsc()
             draw_sleepsc()
             draw_maincat()
