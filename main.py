@@ -14,7 +14,6 @@ cat1group = pygame.sprite.Group()
 startsc_buttons = pygame.sprite.Group()
 catgroup = pygame.sprite.Group()
 coins_gr = pygame.sprite.Group()
-sleeping = False
 
 
 def load_image(name, colorkey=None):
@@ -125,12 +124,12 @@ def draw_acssesory():
 
 
 def draw_maincat():
-    if not sleeping:
+    if not button_and_consts.sleeping:
         maincat.update()
     catgroup.draw(screen)
     meow(maincat, pygame.mouse.get_pos())
     draw_acssesory()
-    if sleeping:
+    if button_and_consts.sleeping:
         screen.blit(pygame.transform.scale(load_image('sleepingcat.png'), (250, 250)), (275, 185))
 
 
@@ -179,11 +178,15 @@ def draw_sleepsc_start():
     pygame.draw.rect(screen, (0, 255, 150), (400, 5, 90, 100))
     connect = sqlite3.connect('tamagochi.db')
     cur = connect.cursor()
+    button_and_consts.sleeping = cur.execute('''SELECT issleeping from sleep''').fetchone()[0]
     date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
     percents = cur.execute('''SELECT percentage from scales WHERE scale = "sleep"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc_sleep = percents - 0.0023 * time if percents - 0.0023 * time >= 0 else 0
+    if not button_and_consts.sleeping:
+        button_and_consts.perc_sleep = percents - 0.0023 * time if percents - 0.0023 * time >= 0 else 0
+    else:
+        button_and_consts.perc_sleep = percents + 0.00347 * time if percents + 0.00347 * time <= 100 else 100
     x = 100 - button_and_consts.perc_sleep
     if button_and_consts.perc_sleep <= 50:
         feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
@@ -203,7 +206,12 @@ def draw_sleepsc():
     date = cur.execute('''SELECT date from scales WHERE scale = "sleep"''').fetchone()[0]
     diff = datetime.datetime.now() - datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     time = diff.seconds + diff.days * 24 * 60 * 60 + diff.microseconds / 1000000
-    button_and_consts.perc_sleep = button_and_consts.perc_sleep - time * 0.0023 if button_and_consts.perc_sleep - time * 0.0023 >= 0 else 0
+    if not button_and_consts.sleeping:
+        button_and_consts.perc_sleep = button_and_consts.perc_sleep - time * 0.0023 if \
+            button_and_consts.perc_sleep - time * 0.0023 >= 0 else 0
+    else:
+        button_and_consts.perc_sleep = button_and_consts.perc_sleep + 0.00347 * time if \
+            button_and_consts.perc_sleep + 0.00347 * time <= 100 else 100
     x = 100 - button_and_consts.perc_sleep
     if button_and_consts.perc_sleep <= 50:
         feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
@@ -616,14 +624,14 @@ clicked = False
 
 
 def meow(cat, pos):
-    global clicked, sleeping
+    global clicked
     smile = pygame.transform.scale(load_image('smile.png'), (250, 250))
     r = cat.get_rect()
     r.topleft = (275, 185)
     if r.collidepoint(pos):
         if pygame.mouse.get_pressed()[0] and not clicked:
             clicked = True
-            sleeping = False
+            button_and_consts.sleeping = 0
             pygame.mixer.Sound('sound_data/gameover.mp3').play()
             screen.blit(smile, (275, 185))
 
@@ -672,27 +680,27 @@ if __name__ == '__main__':
                     terminate()
             draw_fon()
             if gamesb.draw():
-                if not sleeping:
+                if not button_and_consts.sleeping:
                     game_screen()
                 else:
                     catsleep()
             if foodb.draw():
-                if not sleeping:
+                if not button_and_consts.sleeping:
                     food_screen()
                 else:
                     catsleep()
             if clothesb.draw():
-                if not sleeping:
+                if not button_and_consts.sleeping:
                     clothes_screen()
                 else:
                     catsleep()
             if shopb.draw():
-                if not sleeping:
+                if not button_and_consts.sleeping:
                     shop_screen()
                 else:
                     catsleep()
             if sleepb.draw():
-                sleeping = True if not sleeping else False
+                button_and_consts.sleeping = 1 if not button_and_consts.sleeping else 0
             draw_money()
             draw_foodsc()
             draw_sleepsc()
