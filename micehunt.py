@@ -1,21 +1,10 @@
 import pygame
-import os
 import sqlite3
-import sys
 from button_and_consts import Button, FPS, terminate, earning_money
+from button_and_consts import load_image
 
 screen = None
 clock = None
-
-
-def load_image(name):
-    fullname = os.path.join('../Tamagochi/data_micehunt', name)
-    # если файл не существует, то выходим
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
 
 
 all_sprites_try = pygame.sprite.Group()
@@ -50,12 +39,13 @@ def cut_sheet(sheet, columns, rows):  # функция для разреза с�
     return frames
 
 
-ALL_SPRITES_MY = cut_sheet(load_image("pipes.png"), 4, 2)  # спрайты досочки
-ALL_SPRITES_MY_NUMBERS = cut_sheet(load_image("numbers.png"), 5, 2)  # спрайты цифры
-ALL_SPRITES_MY_NUMBERS_FOR_LvL = cut_sheet(load_image("numbers_for_LvL.png"), 5, 2)  # спрайты цифры для уровней
+ALL_SPRITES_MY = cut_sheet(load_image("../Tamagochi/data_micehunt/pipes.png"), 4, 2)  # спрайты досочки
+ALL_SPRITES_MY_NUMBERS = cut_sheet(load_image("../Tamagochi/data_micehunt/numbers.png"), 5, 2)  # спрайты цифры
+ALL_SPRITES_MY_NUMBERS_FOR_LvL = cut_sheet(load_image(
+    "../Tamagochi/data_micehunt/numbers_for_LvL.png"), 5, 2)  # спрайты цифры для уровней
 
 
-class tablet_win_or_defeat:  # класс для таблички победа/поражение после уровня
+class Tabletwinordefeat:  # класс для таблички победа/поражение после уровня
     def __init__(self, width, height, win, lvl, stars):
         self.krestik = None
         self.con = sqlite3.connect("mice.db")
@@ -79,11 +69,12 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
 
     def render(self, screen_for_render, sprites_for_render):
 
-        self.krestik = Button(760, 0, load_image('break.png'), (40, 40), screen_for_render)  # рисуем крестик для выхода
+        self.krestik = Button(760, 0, load_image('../Tamagochi/data_micehunt/break.png'), (
+            40, 40), screen_for_render)  # рисуем крестик для выхода
 
         if self.win:  # если победили
             sprite_1 = pygame.sprite.Sprite()  # отрисовываем номер уровня
-            sprite_1.image = load_image('LvL.png')
+            sprite_1.image = load_image('../Tamagochi/data_micehunt/LvL.png')
             sprite_1.rect = sprite_1.image.get_rect()
             sprites_for_render.add(sprite_1)
             sprite_1.rect = 70, -30
@@ -98,20 +89,20 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
 
             for i in range(3):
                 sprite_1 = pygame.sprite.Sprite()  # отрисовываем серые звездочки везде
-                sprite_1.image = load_image('not_star.png')
+                sprite_1.image = load_image('../Tamagochi/data_micehunt/not_star.png')
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = 306 + kol * i, 140
 
             for i in range(self.stars):  # отрисовываем поверх полученные звездочки
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = load_image('star.png')
+                sprite_1.image = load_image('../Tamagochi/data_micehunt/star.png')
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = 306 + kol * i, 140
         else:  # если проиграли отоброжаем экран поражения
             sprite_1 = pygame.sprite.Sprite()
-            sprite_1.image = load_image('defeat_fon.png')
+            sprite_1.image = load_image('../Tamagochi/data_micehunt/defeat_fon.png')
             sprite_1.rect = sprite_1.image.get_rect()
             sprites_for_render.add(sprite_1)
             sprite_1.rect = 0, 0
@@ -147,7 +138,7 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
                 else:  # если нажали на 6 уровне отрисовываем табличку
                     my_sprite = pygame.sprite.Group()
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = load_image('coming_soon.png')
+                    sprite_1.image = load_image('../Tamagochi/data_micehunt/coming_soon.png')
                     sprite_1.rect = sprite_1.image.get_rect()
                     my_sprite.add(sprite_1)
                     sprite_1.rect = 0, 0
@@ -207,7 +198,7 @@ class Board:  # класс для уровня
         for i in range(0, 800, 70):  # рисуем траву везде
             for j in range(0, 550, 70):
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = load_image('trava_fon.png')
+                sprite_1.image = load_image('../Tamagochi/data_micehunt/trava_fon.png')
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render_2.add(sprite_1)
                 sprite_1.rect = i, j
@@ -215,25 +206,25 @@ class Board:  # класс для уровня
             for j in i:
                 if j != '0' and j != 'M' and j != 'C':  # рисуем болото на месте точек в карте
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = load_image('boloto_fon.png')
+                    sprite_1.image = load_image('../Tamagochi/data_micehunt/boloto_fon.png')
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites_for_render_2.add(sprite_1)
                     sprite_1.rect = left, top
                 if j == 'C' or j == 'M':  # рисуем площадки на месте где должен быть кот и мышь
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = load_image('ploshadka.png')
+                    sprite_1.image = load_image('../Tamagochi/data_micehunt/ploshadka.png')
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites_for_render_2.add(sprite_1)
                     sprite_1.rect = left, top
                     if j == 'C':  # рисуем кота
                         sprite_1 = pygame.sprite.Sprite()
-                        sprite_1.image = load_image('cat.png')
+                        sprite_1.image = load_image('../Tamagochi/data_micehunt/cat.png')
                         sprite_1.rect = sprite_1.image.get_rect()
                         sprites_for_render_2.add(sprite_1)
                         sprite_1.rect = left, top
                     if j == 'M':  # рисуем мышь
                         sprite_1 = pygame.sprite.Sprite()
-                        sprite_1.image = load_image('mouse.png')
+                        sprite_1.image = load_image('../Tamagochi/data_micehunt/mouse.png')
                         sprite_1.rect = sprite_1.image.get_rect()
                         sprites_for_render_2.add(sprite_1)
                         sprite_1.rect = left, top
@@ -279,13 +270,13 @@ class Board:  # класс для уровня
             left = self.left
 
         sprite_1 = pygame.sprite.Sprite()  # кнопка для проверки победы в уровне
-        sprite_1.image = load_image('button_check.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/button_check.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render_2.add(sprite_1)
         sprite_1.rect = 380, -25
 
         sprite_1 = pygame.sprite.Sprite()  # отобрадем номер уровня
-        sprite_1.image = load_image('LvL.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/LvL.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render_2.add(sprite_1)
         sprite_1.rect = 0, 430
@@ -297,7 +288,7 @@ class Board:  # класс для уровня
         sprite_1.rect = 115, 475
 
         sprite_1 = pygame.sprite.Sprite()  # отображаем крестик
-        sprite_1.image = load_image('break.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/break.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render_2.add(sprite_1)
         sprite_1.rect = 760, 0
@@ -311,7 +302,7 @@ class Board:  # класс для уровня
         # pygame.display.flip()
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('shkala_stars_with_fon.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/shkala_stars_with_fon.png')
         sprite_1.rect = sprite_1.image.get_rect()
         my_self = pygame.sprite.Group()
         my_self.add(sprite_1)
@@ -351,8 +342,8 @@ class Board:  # класс для уровня
                 pygame.mixer.music.set_volume(0.05)
                 running2 = True
 
-                win = tablet_win_or_defeat(800, 550, True, self.lvl,
-                                           self.now_stars)  # создаем поле для отобрадения победы
+                win = Tabletwinordefeat(800, 550, True, self.lvl,
+                                        self.now_stars)  # создаем поле для отобрадения победы
 
                 pygame.time.set_timer(pygame.USEREVENT, 100)
                 screen_for_get_cell = pygame.display.set_mode((800, 550))
@@ -361,9 +352,9 @@ class Board:  # класс для уровня
 
                 for i in range(0, 800, 70):  # рисуем траву везде
                     for j in range(0, 550, 70):
-                        screen_for_get_cell.blit(load_image('trava_fon.png'), (i, j))
+                        screen_for_get_cell.blit(load_image('../Tamagochi/data_micehunt/trava_fon.png'), (i, j))
 
-                screen_for_get_cell.blit(load_image('win_fon.png'), (0, 0))
+                screen_for_get_cell.blit(load_image('../Tamagochi/data_micehunt/win_fon.png'), (0, 0))
                 result_bef = \
                     win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?',
                                     (win.lvl,)).fetchall()[0][0]
@@ -394,8 +385,8 @@ class Board:  # класс для уровня
                     pygame.mixer.music.play(-1)
                     pygame.mixer.music.set_volume(0.05)
                     running2 = True
-                    win = tablet_win_or_defeat(800, 550, False, self.lvl,
-                                               self.now_stars)  # создаем табличку для поражения
+                    win = Tabletwinordefeat(800, 550, False, self.lvl,
+                                            self.now_stars)  # создаем табличку для поражения
                     pygame.time.set_timer(pygame.USEREVENT, 100)
                     screen_for_get_cell = pygame.display.set_mode((800, 550))
                     sprites_for_win_or_defeat = pygame.sprite.Group()
@@ -419,7 +410,7 @@ class Board:  # класс для уровня
 
                     my_sprite = pygame.sprite.Group()
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = pygame.transform.scale(load_image('try_better.png'),
+                    sprite_1.image = pygame.transform.scale(load_image('../Tamagochi/data_micehunt/try_better.png'),
                                                             (155, 36))  # говорим сделать попытку еще раз
                     sprite_1.rect = sprite_1.image.get_rect()
                     my_sprite.add(sprite_1)
@@ -455,7 +446,7 @@ class Board:  # класс для уровня
             pass
 
 
-class menu_lvl:  # класс для выбора уровней
+class Menulvl:  # класс для выбора уровней
     def __init__(self, width, height):
         self.con = sqlite3.connect("mice.db")
 
@@ -476,49 +467,49 @@ class menu_lvl:  # класс для выбора уровней
         for i in range(0, 800, 70):  # рисуем траву везде
             for j in range(0, 550, 70):
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = load_image('fon_leveles.png')
+                sprite_1.image = load_image('../Tamagochi/data_micehunt/fon_leveles.png')
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = i, j
 
         sprite_1 = pygame.sprite.Sprite()  # рисуем рамочки для уровней
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 150, 115
 
         sprite_1 = pygame.sprite.Sprite()  # рисуем стрелочку
-        sprite_1.image = pygame.transform.scale(load_image('next_rofl.png'), (70, 70))
+        sprite_1.image = pygame.transform.scale(load_image('../Tamagochi/data_micehunt/next_rofl.png'), (70, 70))
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 635, 230
 
         sprite_1 = pygame.sprite.Sprite()  # риусем обрамление для уровней
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 180 + 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 360 + 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 150, 295
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 180 + 150, 295
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('levels_obramlenie.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 360 + 150, 295
@@ -572,14 +563,15 @@ class menu_lvl:  # класс для выбора уровней
             for j in range(1, 4):
 
                 sprite_1 = pygame.sprite.Sprite()  # отрисовываем везде серые звездочки
-                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30 * 1, 30))
+                sprite_1.image = pygame.transform.scale(load_image('../Tamagochi/data_micehunt/not_star.png'), (
+                    30 * 1, 30))
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = x + kol * (j - 1), 85
 
                 if star > 0:  # отрисовываем реальные звездочки
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30, 30))
+                    sprite_1.image = pygame.transform.scale(load_image('../Tamagochi/data_micehunt/star.png'), (30, 30))
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites_for_render.add(sprite_1)
                     sprite_1.rect = x + kol * (j - 1), 85
@@ -597,14 +589,15 @@ class menu_lvl:  # класс для выбора уровней
             star = int(result[0][0])
             for j in range(1, 4):
                 sprite_1 = pygame.sprite.Sprite()
-                sprite_1.image = pygame.transform.scale(load_image('not_star.png'), (30, 30))
+                sprite_1.image = pygame.transform.scale(load_image('../Tamagochi/data_micehunt/not_star.png'), (30, 30))
                 sprite_1.rect = sprite_1.image.get_rect()
                 sprites_for_render.add(sprite_1)
                 sprite_1.rect = x + kol * (j - 1), 265
 
                 if star > 0:
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = pygame.transform.scale(load_image('star.png'), (30 * 1, 30 * 1))
+                    sprite_1.image = pygame.transform.scale(load_image(
+                        '../Tamagochi/data_micehunt/star.png'), (30 * 1, 30 * 1))
                     sprite_1.rect = sprite_1.image.get_rect()
                     sprites_for_render.add(sprite_1)
                     sprite_1.rect = x + kol * (j - 1), 265
@@ -614,7 +607,7 @@ class menu_lvl:  # класс для выбора уровней
             level += 1
 
         sprite_1 = pygame.sprite.Sprite()
-        sprite_1.image = load_image('break.png')
+        sprite_1.image = load_image('../Tamagochi/data_micehunt/break.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites_for_render.add(sprite_1)
         sprite_1.rect = 760, 0
@@ -667,7 +660,7 @@ def micehunt_f():  # функция для запуска музыки и соз
     pygame.mixer.music.load('sound_data/micesound.mp3')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.05)
-    board1 = menu_lvl(10, 6)
+    board1 = Menulvl(10, 6)
     running = True
     board1.set_view(50, 65, 70)
     while running:
@@ -683,7 +676,7 @@ def micehunt_f():  # функция для запуска музыки и соз
                 if 655 <= pos[0] <= 700 and 230 <= pos[1] <= 300:  # если нажали на стрелочку
                     my_sprite = pygame.sprite.Group()
                     sprite_1 = pygame.sprite.Sprite()
-                    sprite_1.image = load_image('coming_soon.png')
+                    sprite_1.image = load_image('../Tamagochi/data_micehunt/coming_soon.png')
                     sprite_1.rect = sprite_1.image.get_rect()
                     my_sprite.add(sprite_1)
                     sprite_1.rect = 0, 0

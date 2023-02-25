@@ -1,6 +1,4 @@
 import pygame
-import os
-import sys
 import random
 from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH, earning_money
 from button_and_consts import load_image
