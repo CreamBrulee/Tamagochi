@@ -80,7 +80,7 @@ def end_screen():
     scim = pygame.transform.scale(load_image(sc_image), s)
     screen.blit(scim, (250 - x, 165))
     font = pygame.font.Font(None, 100)
-    string_rendered = font.render(str(score), 1, pygame.Color('black'))
+    string_rendered = font.render(str(score), bool(1), pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (420, 165)
     screen.blit(string_rendered, intro_rect)
@@ -242,7 +242,7 @@ def catchfoodgamef():
     # отрисовка счета
     sc = pygame.transform.scale(load_image('start_end/score.png'), (100, 40))
     font = pygame.font.Font(None, 70)
-    string_rendered = font.render(str(score), 1, pygame.Color('black'))
+    string_rendered = font.render(str(score), bool(1), pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (115, 5)
     # переменная подсчета итераций для генерации еды или бомбы
@@ -283,7 +283,7 @@ def catchfoodgamef():
             return True
         # отрисовка счета и жизней
         screen.blit(sc, (5, 5))
-        string_rendered = font.render(str(score), 1, pygame.Color('black'))
+        string_rendered = font.render(str(score), bool(1), pygame.Color('black'))
         screen.blit(string_rendered, intro_rect)
         screen.blit(h1, (690, 10))
         screen.blit(h2, (657, 10))

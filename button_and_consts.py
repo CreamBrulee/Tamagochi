@@ -32,7 +32,7 @@ def load_image(name, colorkey=None):
 def earning_money(screen, money):
     coin = pygame.transform.scale(load_image('data/coin.png'), (60, 60))
     font = pygame.font.Font(None, 100)
-    string_rendered = font.render('+' + str(int(money)), 1, pygame.Color('black'))
+    string_rendered = font.render('+' + str(int(money)), bool(1), pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (5, 60)
     screen.blit(coin, (intro_rect.right + 5, 60))
@@ -91,4 +91,3 @@ def terminate():
     connect.close()
     pygame.quit()
     sys.exit()
-

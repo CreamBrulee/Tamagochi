@@ -69,14 +69,14 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 # начальный экран
 def start_screen():
-    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('data/fon.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
-    imagel = pygame.transform.scale(load_image('logo.png'), (400, 200))
+    imagel = pygame.transform.scale(load_image('data/logo.png'), (400, 200))
     screen.blit(imagel, (10, 20))
     # кнопки старта и выхода
-    startb = Button(50, 220, load_image('start.png'), (250, 75), screen)
-    quitb = Button(50, 305, load_image('quit.png'), (250, 75), screen)
-    cat = AnimatedSprite(pygame.transform.scale(load_image('cat1.png'), (600, 300)), 2, 1, 460, 80, cat1group)
+    startb = Button(50, 220, load_image('data/start.png'), (250, 75), screen)
+    quitb = Button(50, 305, load_image('data/quit.png'), (250, 75), screen)
+    cat = AnimatedSprite(pygame.transform.scale(load_image('data/cat1.png'), (600, 300)), 2, 1, 460, 80, cat1group)
     # счет для скорости анимации
     i = 1
     cat1group.draw(screen)
@@ -103,13 +103,13 @@ def start_screen():
 
 # функция отрисовки основного фона
 def draw_fon():
-    fon = pygame.transform.scale(load_image('fon2.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('data/fon2.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
 
 # создание анимированного спрайта кота
-maincat = AnimatedSprite(pygame.transform.scale(load_image('spritesheet_maincat.png'), (1250, 750)), 5, 3, 275, 185,
-                         catgroup)
+maincat = AnimatedSprite(pygame.transform.scale(load_image('data/spritesheet_maincat.png'), (
+    1250, 750)), 5, 3, 275, 185, catgroup)
 
 
 # функция отрисовки одежды кота
@@ -118,15 +118,15 @@ def draw_acssesory():
     # Создание курсора
     cur = con.cursor()
     result = cur.execute("""SELECT name, have, wearing FROM clothes""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))# выбираем те аксессуары которые в наличии
-    result = list(filter(lambda item: int(item[2]), result))# выюираем те аксессуары которы надо надеть
+    result = list(filter(lambda item: int(item[1]), result))  # выбираем те аксессуары которые в наличии
+    result = list(filter(lambda item: int(item[2]), result))  # выюираем те аксессуары которы надо надеть
     names = []
     for i in result:
         names.append(i[0])
     kol = 0
-    for i in names:# отрисовываем аксессуары
+    for i in names:  # отрисовываем аксессуары
         kol += 1
-        screen.blit(pygame.transform.scale(load_image('clothes/for_cat/' + i + '.png'), (250, 250)), (275, 185))
+        screen.blit(pygame.transform.scale(load_image('data/clothes/for_cat/' + i + '.png'), (250, 250)), (275, 185))
 
 
 # отрисовка основного кота
@@ -137,7 +137,7 @@ def draw_maincat():
     meow(maincat, pygame.mouse.get_pos())
     draw_acssesory()
     if button_and_consts.sleeping:
-        screen.blit(pygame.transform.scale(load_image('sleepingcat.png'), (250, 250)), (275, 185))
+        screen.blit(pygame.transform.scale(load_image('data/sleepingcat.png'), (250, 250)), (275, 185))
 
 
 # первая отрисовка шкалы еды с учетом времени нахождения вне игры
@@ -156,7 +156,7 @@ def draw_foodsc_start():
     x = 100 - button_and_consts.perc_food
     # отрисовка уведомления о надобности покормить кота
     if button_and_consts.perc_food <= 50:
-        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        feed = pygame.transform.scale(load_image('data/feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
     # обновление времени в базе данных
@@ -164,7 +164,7 @@ def draw_foodsc_start():
     connect.commit()
     connect.close()
     # отрисовка картинки шкалы
-    food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
+    food_scale = pygame.transform.scale(load_image('data/foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
 
 
@@ -184,7 +184,7 @@ def draw_foodsc():
     x = 100 - button_and_consts.perc_food
     # отрисовка уведомления о надобности покормить кота
     if button_and_consts.perc_food <= 50:
-        feed = pygame.transform.scale(load_image('feed.png'), (175, 50))
+        feed = pygame.transform.scale(load_image('data/feed.png'), (175, 50))
         screen.blit(feed, (10, 100))
     pygame.draw.rect(screen, (100, 100, 100), (300, 5, 90, x))
     # обновление времени в базе данных
@@ -192,7 +192,7 @@ def draw_foodsc():
     connect.commit()
     connect.close()
     # отрисовка картинки шкалы
-    food_scale = pygame.transform.scale(load_image('foodsc.png'), (90, 100))
+    food_scale = pygame.transform.scale(load_image('data/foodsc.png'), (90, 100))
     screen.blit(food_scale, (300, 5))
 
 
@@ -216,7 +216,7 @@ def draw_sleepsc_start():
     x = 100 - button_and_consts.perc_sleep
     # отрисовка уведомления о надобности дать поспать коту
     if button_and_consts.perc_sleep <= 50:
-        feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
+        feed = pygame.transform.scale(load_image('data/wantsleep.png'), (175, 79))
         screen.blit(feed, (10, 160))
     pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
     # обновление времени в базе данных
@@ -224,7 +224,7 @@ def draw_sleepsc_start():
     connect.commit()
     connect.close()
     # отрисовка картинки шкалы
-    food_scale = pygame.transform.scale(load_image('sleepsc.png'), (90, 100))
+    food_scale = pygame.transform.scale(load_image('data/sleepsc.png'), (90, 100))
     screen.blit(food_scale, (400, 5))
 
 
@@ -248,7 +248,7 @@ def draw_sleepsc():
     x = 100 - button_and_consts.perc_sleep
     # отрисовка уведомления о надобности дать поспать коту
     if button_and_consts.perc_sleep <= 50 and not button_and_consts.sleeping:
-        feed = pygame.transform.scale(load_image('wantsleep.png'), (175, 79))
+        feed = pygame.transform.scale(load_image('data/wantsleep.png'), (175, 79))
         screen.blit(feed, (10, 160))
     pygame.draw.rect(screen, (100, 100, 100), (400, 5, 90, x))
     # обновление времени в базе данных
@@ -256,12 +256,12 @@ def draw_sleepsc():
     connect.commit()
     connect.close()
     # отрисовка картинки шкалы
-    food_scale = pygame.transform.scale(load_image('sleepsc.png'), (90, 100))
+    food_scale = pygame.transform.scale(load_image('data/sleepsc.png'), (90, 100))
     screen.blit(food_scale, (400, 5))
 
 
 # создание анимированного спрайта монеты
-coin = AnimatedSprite(pygame.transform.scale(load_image('money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
+coin = AnimatedSprite(pygame.transform.scale(load_image('data/money.png'), (420, 70)), 6, 1, 5, 5, coins_gr)
 k = 0
 
 
@@ -272,7 +272,7 @@ def draw_money():
     cur = connect.cursor()
     coins = cur.execute('''SELECT coins from money''').fetchone()[0]
     font = pygame.font.Font(None, 100)
-    string_rendered = font.render(str(coins), 1, pygame.Color('white'))
+    string_rendered = font.render(str(coins), bool(1), pygame.Color('white'))
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (80, 5)
     screen.blit(string_rendered, intro_rect)
@@ -286,23 +286,23 @@ def draw_money():
 # создание экрана поверх основного при открытии меню миниигр или магазина
 def extra_screen():
     pygame.draw.rect(screen, (255, 255, 255), (40, 40, 720, 470))
-    quitb2 = Button(720, 40, load_image('cross.png'), (40, 40), screen)
+    quitb2 = Button(720, 40, load_image('data/cross.png'), (40, 40), screen)
     return quitb2
 
 
 # создание экрана поверх основного при открытии холодильника или шкафа
 def extra_screen_food_and_clothes():
     pygame.draw.rect(screen, (255, 255, 255), (40, 400, 720, 110))
-    quitb2 = Button(720, 400, load_image('cross.png'), (40, 40), screen)
+    quitb2 = Button(720, 400, load_image('data/cross.png'), (40, 40), screen)
     return quitb2
 
 
 # меню миниигр
 def game_screen():
     q = extra_screen()
-    flappycat = Button(50, 50, load_image('game3.png'), (500, 113), screen)
-    micehuntb = Button(50, 183, load_image('game2.png'), (500, 113), screen)
-    catchfood = Button(50, 316, load_image('game1.png'), (500, 113), screen)
+    flappycat = Button(50, 50, load_image('data/game3.png'), (500, 113), screen)
+    micehuntb = Button(50, 183, load_image('data/game2.png'), (500, 113), screen)
+    catchfood = Button(50, 316, load_image('data/game1.png'), (500, 113), screen)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -347,19 +347,19 @@ def food_screen():
     cur = con.cursor()
     con_scale_food = sqlite3.connect("tamagochi.db")
     result = cur.execute("""SELECT name, have FROM food""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))# выбираем ту еду которой >= 1
+    result = list(filter(lambda item: int(item[1]), result))  # выбираем ту еду которой >= 1
     names = []
     buttons_food = []
     for i in result:
         names.append(i[0])
     kol = 0
-    for i in names:# добавляем картинки еды в качетсве кнопок и отрисовываем цены
+    for i in names:  # добавляем картинки еды в качетсве кнопок и отрисовываем цены
         kol += 1
         buttons_food.append(
-            Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + i + '.PNG'), (50, 50), screen, i, False))
-        screen.blit(pygame.transform.scale(load_image('costs/' + '1' + '.png'), (25, 25)),
+            Button(75 + 110 * (kol - 1), 420, load_image('data/eatings/' + i + '.PNG'), (50, 50), screen, i, False))
+        screen.blit(pygame.transform.scale(load_image('data/costs/' + '1' + '.png'), (25, 25)),
                     (80 + 110 * (kol - 1), 475))
-    for i in buttons_food:# отрисовываем еду
+    for i in buttons_food:  # отрисовываем еду
         i.draw()
     while True:
         draw_fon()
@@ -373,7 +373,7 @@ def food_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in buttons_food:
                     if i.draw():
-                        pygame.mixer.Sound('sound_data/click.mp3').play() #  издаем звук при нажатии
+                        pygame.mixer.Sound('sound_data/click.mp3').play()  # издаем звук при нажатии
                         button_and_consts.perc_food = button_and_consts.perc_food + 5 if \
                             button_and_consts.perc_food + 5 <= 100 else 100
                         # вычитаем одну еду из БД
@@ -395,18 +395,19 @@ def food_screen():
         for key, volume in names.items():
             kol += 1
             buttons_food.append(
-                Button(75 + 110 * (kol - 1), 420, load_image('eatings/' + key + '.PNG'), (50, 50), screen, key, False))
+                Button(75 + 110 * (kol - 1), 420, load_image('data/eatings/' + key + '.PNG'), (
+                    50, 50), screen, key, False))
             # печатаем цены
             if volume >= 10:
-                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/costs/' + str(volume)[0] + '.png'), (25, 25)),
                             (80 + 110 * (kol - 1), 475))
-                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[1] + '.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/costs/' + str(volume)[1] + '.png'), (25, 25)),
                             (105 + 110 * (kol - 1), 475))
             else:
-                screen.blit(pygame.transform.scale(load_image('costs/' + str(volume)[0] + '.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/costs/' + str(volume)[0] + '.png'), (25, 25)),
                             (80 + 110 * (kol - 1), 475))
         for i in buttons_food:
-            i.draw()#отображаем кнопки
+            i.draw()  # отображаем кнопки
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -414,16 +415,11 @@ def food_screen():
 # экран шкафа одежды
 def clothes_screen():
     q = extra_screen_food_and_clothes()
-
     con = sqlite3.connect("clothes_and_food.db")
-
     # Создание курсора
     cur = con.cursor()
-    con_scale_food = sqlite3.connect("tamagochi.db")
-
-    # Создание курсора
     result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
-    result = list(filter(lambda item: int(item[1]), result))#выбираем ту одежду которая куплена
+    result = list(filter(lambda item: int(item[1]), result))  # выбираем ту одежду которая куплена
     names = []
     buttons_clothes = []
     for i in result:
@@ -433,15 +429,16 @@ def clothes_screen():
         kol += 1
         result = cur.execute('SELECT wearing FROM clothes WHERE name = ? AND have = 1',
                              (i,)).fetchone()[0]
-        if result == 1:#если одежда одета то рисуем ее темной
+        if result == 1:  # если одежда одета то рисуем ее темной
             buttons_clothes.append(
-                Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '_dark.PNG'), (70, 70), screen, i, False))
-        else:# иначе рисуем ее активной
+                Button(85 + 110 * (kol - 1), 420, load_image('data/clothes/' + i + '_dark.PNG'), (
+                    70, 70), screen, i, False))
+        else:  # иначе рисуем ее активной
             buttons_clothes.append(
-                Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '.PNG'), (70, 70), screen, i, False))
+                Button(85 + 110 * (kol - 1), 420, load_image('data/clothes/' + i + '.PNG'), (70, 70), screen, i, False))
 
     for i in buttons_clothes:
-        i.draw()#прорисовываем одежду
+        i.draw()  # прорисовываем одежду
 
     while True:
         draw_fon()
@@ -455,7 +452,7 @@ def clothes_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in buttons_clothes:
                     if i.draw():
-                        pygame.mixer.Sound('sound_data/click.mp3').play() #производим звук
+                        pygame.mixer.Sound('sound_data/click.mp3').play()  # производим звук
                         result = cur.execute('SELECT wearing FROM clothes WHERE name = ? AND have = 1', (
                             i.name_for_food_or_for_clothes,)).fetchone()[0]
                         # при нажатии либо снимаем либо одеваем одежду
@@ -469,7 +466,7 @@ def clothes_screen():
 
         if q.draw():
             return
-        #повторяем то же что и раньше
+        # повторяем то же что и раньше
         result = cur.execute("""SELECT name, have FROM clothes""").fetchall()
         result = list(filter(lambda item: int(item[1]), result))
         names = []
@@ -487,7 +484,7 @@ def clothes_screen():
                         'clothes/' + i + '_dark.PNG'), (70, 70), screen, i, False))
             else:
                 buttons_clothes.append(
-                    Button(85 + 110 * (kol - 1), 420, load_image('clothes/' + i + '.PNG'), (70, 70), screen, i,
+                    Button(85 + 110 * (kol - 1), 420, load_image('data/clothes/' + i + '.PNG'), (70, 70), screen, i,
                            False))
 
         for i in buttons_clothes:
@@ -510,7 +507,7 @@ def shop_screen():
 
     buttons_buy = []
     food = ['burger', 'chese', 'chicken', 'egg', 'fish', 'peach']
-    buy = pygame.transform.scale(load_image('buy.PNG'), (
+    buy = pygame.transform.scale(load_image('data/buy.PNG'), (
         70, 40))
     kol = 0
     cost_of_food = ['5', '3', '4', '2', '5', '7']
@@ -518,35 +515,34 @@ def shop_screen():
     costs_of_clothes_with_names = {'bant': 60, 'choker_blue': 30, 'fartyk': 89, 'hair': 50,
                                    'hat': 35, 'jevelery': 40}
 
-    for i in range(6):# отрисовываем еду и цены
+    for i in range(6):  # отрисовываем еду и цены
         kol += 1
-        screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)), (85 + 110 * i, 80))
+        screen.blit(pygame.transform.scale(load_image('data/eatings/' + food[i] + '.png'), (
+            40, 40)), (85 + 110 * i, 80))
         buttons_buy.append(Button(75 + 110 * (kol - 1), 160, buy, (70, 40), screen, food[i], False))
-        screen.blit(pygame.transform.scale(load_image('costs/' + cost_of_food[i] + '.png'), (25, 25)),
+        screen.blit(pygame.transform.scale(load_image('data/costs/' + cost_of_food[i] + '.png'), (25, 25)),
                     (80 + 110 * (kol - 1), 125))
-        screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+        screen.blit(pygame.transform.scale(load_image('data/coin.png'), (25, 25)),
                     (105 + 110 * (kol - 1), 125))
     kol = 0
-    for key, volume in costs_of_clothes_with_names.items(): #отрисовываем одежду
+    for key, volume in costs_of_clothes_with_names.items():  # отрисовываем одежду
         result = cur.execute('SELECT have FROM clothes WHERE name = ?',
                              (key,)).fetchone()[0]
-        if result == '1':#отрисовываем серым если уже куплено
-            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '_dark.png'), (50, 50)),
+        if result == '1':  # отрисовываем серым если уже куплено
+            screen.blit(pygame.transform.scale(load_image('data/clothes/' + key + '_dark.png'), (50, 50)),
                         (80 + 110 * kol, 240))
-        else:#инчае рисуем одежду активной с кнопкой
-            screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (50, 50)),
+        else:  # инчае рисуем одежду активной с кнопкой
+            screen.blit(pygame.transform.scale(load_image('data/clothes/' + key + '.png'), (50, 50)),
                         (80 + 110 * kol, 240))
             first = str(volume)[0]
             second = str(volume)[1]
-            screen.blit(pygame.transform.scale(load_image('costs/' + first + '.png'), (25, 25)),
+            screen.blit(pygame.transform.scale(load_image('data/costs/' + first + '.png'), (25, 25)),
                         (180 + 110 * (kol - 1), 285))
-            screen.blit(pygame.transform.scale(load_image('costs/' + second + '.png'), (25, 25)),
+            screen.blit(pygame.transform.scale(load_image('data/costs/' + second + '.png'), (25, 25)),
                         (205 + 110 * (kol - 1), 285))
-            screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+            screen.blit(pygame.transform.scale(load_image('data/coin.png'), (25, 25)),
                         (230 + 110 * (kol - 1), 285))
             buttons_buy.append(Button(75 + 110 * kol, 320, buy, (70, 40), screen, key, False))
-            # screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
-            #            (145 + 110 * (kol - 1), 165))
         kol += 1
     while True:
         for event in pygame.event.get():
@@ -557,19 +553,19 @@ def shop_screen():
         kol = 0
         for i in range(6):
             kol += 1
-            #отрисовываем еду
-            screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)),
+            # отрисовываем еду
+            screen.blit(pygame.transform.scale(load_image('data/eatings/' + food[i] + '.png'), (40, 40)),
                         (85 + 110 * i, 80))
         for i in range(len(buttons_buy)):
             button = buttons_buy[i]
             index = i
             if button.draw():
-                pygame.mixer.Sound('sound_data/click.mp3').play()#производим звук
+                pygame.mixer.Sound('sound_data/click.mp3').play()  # производим звук
                 result = int(cur_money.execute("""SELECT coins FROM money""").fetchall()[0][0])
                 if button.name_for_food_or_for_clothes in costs_of_food_with_names:
-                    if costs_of_food_with_names[button.name_for_food_or_for_clothes] > result:#если денег не хватило
+                    if costs_of_food_with_names[button.name_for_food_or_for_clothes] > result:  # если денег не хватило
                         q = extra_screen()
-                        screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
+                        screen.blit(pygame.transform.scale(load_image('data/fon_without_money.png'), (800, 550)),
                                     (0, 0))
                         while True:
                             for event in pygame.event.get():
@@ -579,7 +575,7 @@ def shop_screen():
                                 return
                             pygame.display.flip()
                             clock.tick(FPS)
-                    else:#иначе покупаем еду и добавляем в БД
+                    else:  # иначе покупаем еду и добавляем в БД
                         result = cur.execute("""SELECT have FROM food
                                     WHERE name = ?""", (food[index],)).fetchall()[0][0]
                         cur_money.execute('UPDATE money SET coins = ?',
@@ -593,9 +589,10 @@ def shop_screen():
                         con_money.commit()
                         con.commit()
                 else:
-                    if costs_of_clothes_with_names[button.name_for_food_or_for_clothes] > result: #если денег не хватило соощаем об этом
+                    if costs_of_clothes_with_names[button.name_for_food_or_for_clothes] > result:
+                        # если денег не хватило соощаем об этом
                         q = extra_screen()
-                        screen.blit(pygame.transform.scale(load_image('fon_without_money.png'), (800, 550)),
+                        screen.blit(pygame.transform.scale(load_image('data/fon_without_money.png'), (800, 550)),
                                     (0, 0))
                         while True:
                             for event in pygame.event.get():
@@ -605,7 +602,7 @@ def shop_screen():
                                 return
                             pygame.display.flip()
                             clock.tick(FPS)
-                    else:#иначе покупаем одежду добавляем в БД и вычитаем деньги
+                    else:  # иначе покупаем одежду добавляем в БД и вычитаем деньги
                         result = cur.execute('SELECT have FROM clothes WHERE name = ?', (
                             button.name_for_food_or_for_clothes, )).fetchone()[0]
                         if result == '0':
@@ -620,10 +617,10 @@ def shop_screen():
         extra_screen()
         if q.draw():
             return
-        #повторяем тоже что и раньше
+        # повторяем тоже что и раньше
         buttons_buy = []
         food = ['burger', 'chese', 'chicken', 'egg', 'fish', 'peach']
-        buy = pygame.transform.scale(load_image('buy.PNG'), (
+        buy = pygame.transform.scale(load_image('data/buy.PNG'), (
             70, 40))
         kol = 0
         cost_of_food = ['5', '3', '4', '2', '5', '7']
@@ -633,33 +630,33 @@ def shop_screen():
 
         for i in range(6):
             kol += 1
-            screen.blit(pygame.transform.scale(load_image('eatings/' + food[i] + '.png'), (40, 40)),
+            screen.blit(pygame.transform.scale(load_image('data/eatings/' + food[i] + '.png'), (40, 40)),
                         (85 + 110 * i, 80))
             buttons_buy.append(Button(75 + 110 * (kol - 1), 160, buy, (70, 40), screen, food[i], False))
-            screen.blit(pygame.transform.scale(load_image('costs/' + cost_of_food[i] + '.png'), (25, 25)),
+            screen.blit(pygame.transform.scale(load_image('data/costs/' + cost_of_food[i] + '.png'), (25, 25)),
                         (80 + 110 * (kol - 1), 125))
-            screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+            screen.blit(pygame.transform.scale(load_image('data/coin.png'), (25, 25)),
                         (105 + 110 * (kol - 1), 125))
         kol = 0
         for key, volume in costs_of_clothes_with_names.items():
             result = cur.execute('SELECT have FROM clothes WHERE name = ?',
                                  (key,)).fetchone()[0]
             if result == '1':
-                screen.blit(pygame.transform.scale(load_image('clothes/' + key + '_dark.png'), (50, 50)),
+                screen.blit(pygame.transform.scale(load_image('data/clothes/' + key + '_dark.png'), (50, 50)),
                             (80 + 110 * kol, 240))
             else:
-                screen.blit(pygame.transform.scale(load_image('clothes/' + key + '.png'), (50, 50)),
+                screen.blit(pygame.transform.scale(load_image('data/clothes/' + key + '.png'), (50, 50)),
                             (80 + 110 * kol, 240))
                 first = str(volume)[0]
                 second = str(volume)[1]
-                screen.blit(pygame.transform.scale(load_image('costs/' + first + '.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/costs/' + first + '.png'), (25, 25)),
                             (180 + 110 * (kol - 1), 285))
-                screen.blit(pygame.transform.scale(load_image('costs/' + second + '.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/costs/' + second + '.png'), (25, 25)),
                             (205 + 110 * (kol - 1), 285))
-                screen.blit(pygame.transform.scale(load_image('coin.png'), (25, 25)),
+                screen.blit(pygame.transform.scale(load_image('data/coin.png'), (25, 25)),
                             (230 + 110 * (kol - 1), 285))
                 buttons_buy.append(Button(75 + 110 * kol, 320, buy, (70, 40), screen, key, False))
-                # screen.blit(pygame.transform.scale(load_image('costs/' + str(volume) + '.png'), (35, 35)),
+                # screen.blit(pygame.transform.scale(load_image('data/costs/' + str(volume) + '.png'), (35, 35)),
                 #            (145 + 110 * (kol - 1), 165))
             kol += 1
         for i in buttons_buy:
@@ -675,7 +672,7 @@ clicked = False
 # обработка нажатия на кота
 def meow(cat, pos):
     global clicked
-    smile = pygame.transform.scale(load_image('smile.png'), (250, 250))
+    smile = pygame.transform.scale(load_image('data/smile.png'), (250, 250))
     r = cat.get_rect()
     r.topleft = (275, 185)
     if r.collidepoint(pos):
@@ -691,9 +688,9 @@ def meow(cat, pos):
 
 # экран, уведомляющий о недоступности миниигр, холодильника, шкафа, магазина, если кот спит
 def catsleep():
-    catsl = pygame.transform.scale(load_image('catsleep.png'), (800, 550))
+    catsl = pygame.transform.scale(load_image('data/catsleep.png'), (800, 550))
     screen.blit(catsl, (0, 0))
-    quitb2 = Button(720, 40, load_image('cross.png'), (40, 40), screen)
+    quitb2 = Button(720, 40, load_image('data/cross.png'), (40, 40), screen)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -721,17 +718,17 @@ if __name__ == '__main__':
     a = start_screen()
     if a:
         # создание кнопок для основного экрана
-        gamesb = Button(72, 450, load_image('games.png'), (110, 110), screen)
-        foodb = Button(254, 440, load_image('food.png'), (110, 110), screen)
-        clothesb = Button(436, 440, load_image('clothes.png'), (110, 110), screen)
-        shopb = Button(618, 440, load_image('shop.png'), (110, 110), screen)
-        sleepb = Button(600, 260, load_image('sleepb.png'), (150, 60), screen)
+        gamesb = Button(72, 450, load_image('data/games.png'), (110, 110), screen)
+        foodb = Button(254, 440, load_image('data/food.png'), (110, 110), screen)
+        clothesb = Button(436, 440, load_image('data/clothes.png'), (110, 110), screen)
+        shopb = Button(618, 440, load_image('data/shop.png'), (110, 110), screen)
+        sleepb = Button(600, 260, load_image('data/sleepb.png'), (150, 60), screen)
         # первая отрисовка шкал
         draw_foodsc_start()
         draw_sleepsc_start()
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for eve in pygame.event.get():
+                if eve.type == pygame.QUIT:
                     terminate()
             draw_fon()
             # обработка нажатий на кнопки миниигр, холодильника, шкафа, магазина с учетом сна кота

@@ -9,7 +9,8 @@ screen = 0
 clock = 0
 score = 0
 
-def load_image(name, colorkey=None):
+
+def load_image(name):
     fullname = os.path.join(name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
@@ -17,9 +18,11 @@ def load_image(name, colorkey=None):
     image = pygame.image.load(fullname)
     return image
 
+
+# экран старта
 def start_screen():
     q = Button(760, 0, load_image('data/cross.png'), (40, 40), screen)
-    play = Button(325, 168, load_image('start_end/play.png', colorkey=-1), (150, 75), screen)
+    play = Button(325, 168, load_image('start_end/play.png'), (150, 75), screen)
     logo = pygame.transform.scale(load_image('data/game3.png'), (400, 88))
     screen.blit(logo, (200, 30))
     while True:
@@ -33,6 +36,8 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
+
+# экран проигрыша
 def end_screen():
     global score
     connect = sqlite3.connect('tamagochi.db')
@@ -52,7 +57,7 @@ def end_screen():
     scim = pygame.transform.scale(load_image(sc_image), s)
     screen.blit(scim, (250 - x, 165))
     font = pygame.font.Font(None, 100)
-    string_rendered = font.render(str(int(score)), 1, pygame.Color('black'))
+    string_rendered = font.render(str(int(score)), bool(1), pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
     intro_rect.topleft = (420, 165)
     screen.blit(string_rendered, intro_rect)
@@ -76,6 +81,7 @@ def end_screen():
         clock.tick(FPS)
 
 
+# оснавная функция миниигры
 def main():
     global score
     pygame.mixer.music.load('sound_data/fonk.mp3')
@@ -87,7 +93,6 @@ def main():
     pygame.display.flip()
     y = 200
     font = pygame.font.Font(None, 70)
-    fontt = pygame.font.Font(None, 80)
     bird = pygame.Rect(200, y, 50, 50)
     imgbird = pygame.transform.scale(load_image('data/cat.png'), (70, 70))
     imgtrubs = pygame.transform.scale(load_image('data/true_fver.png'), (50, 300))
@@ -107,7 +112,6 @@ def main():
     fonk.append(pygame.Rect(680, 0, 170, 560))
     y = 200
     v1 = 0
-    r = 0
     v2 = 2
     begin = 0
     running = True
@@ -193,7 +197,6 @@ def main():
             r = 255
             st = False
             end_screen()
-
         for h in fonk:
             screen.blit(imgfon, h)
         for u in trubs:
@@ -203,19 +206,17 @@ def main():
             else:
                 re = imgtrubs.get_rect(topleft=u.topleft)
                 screen.blit(imgtrubs, re)
-
         cat = imgbird.subsurface(0, 0, 70, 70)
         if v1 > -25:
-             cat = pygame.transform.rotate(cat, -v1 * 2)
+            cat = pygame.transform.rotate(cat, -v1 * 2)
         else:
             cat = pygame.transform.rotate(cat, 20 * 2)
         screen.blit(cat, bird)
-        text = font.render(str(int(score)), 1, (0, 0, 0))
+        text = font.render(str(int(score)), bool(1), (0, 0, 0))
         screen.blit(sc, (10, 10))
         screen.blit(text, (118, 8))
         if q.draw():
             return True
-
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
