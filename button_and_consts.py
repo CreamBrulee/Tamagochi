@@ -28,7 +28,7 @@ def load_image(name, colorkey=None):
     return image
 
 
-# функция заработка денег в играх
+# функция заработка денег в минииграх
 def earning_money(screen, money):
     coin = pygame.transform.scale(load_image('data/coin.png'), (60, 60))
     font = pygame.font.Font(None, 100)
