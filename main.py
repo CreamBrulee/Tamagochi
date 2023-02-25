@@ -1,6 +1,4 @@
-import os
 import sqlite3
-import sys
 import pygame
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
