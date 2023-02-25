@@ -122,8 +122,7 @@ class tablet_win_or_defeat:  # класс для таблички победа/�
     def get_cell(self, mouse_pos):
         clock_for_get_cell = pygame.time.Clock()
         if self.win:
-            if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[
-                1] <= 489:  # если нажали на кнопку следующий уровень
+            if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[1] <= 489:  # если нажали кнопку следующий уровень
                 if self.lvl <= 5:  # если нажали на кнопку след уровень до 5 вкл уровня
                     board = Board(10, 6)
                     running1 = True
@@ -365,15 +364,12 @@ class Board:  # класс для уровня
                         screen_for_get_cell.blit(load_image('trava_fon.png'), (i, j))
 
                 screen_for_get_cell.blit(load_image('win_fon.png'), (0, 0))
-                result_before = \
-                    win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (win.lvl,)).fetchall()[0][0]
-                print(result_before)
+                result_bef = \
+                    win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?',
+                                    (win.lvl,)).fetchall()[0][0]
                 win.cur.execute('UPDATE micehunt_bestscores SET stars = ? WHERE level = ?', (win.stars, win.lvl,))
                 win.con.commit()
-                earning_money(screen_for_get_cell, (win.stars - result_before) * 3)
-                result_after = \
-                    win.cur.execute('SELECT stars from micehunt_bestscores WHERE level = ?', (win.lvl,)).fetchall()[
-                        0][0]
+                earning_money(screen_for_get_cell, (win.stars - result_bef) * 3)
                 while running2:
                     for event1 in pygame.event.get():
                         if event1.type == pygame.QUIT:
@@ -650,7 +646,8 @@ class menu_lvl:  # класс для выбора уровней
                 board.render(all_sprites_try_for_better_3, screen1, kol)
                 pygame.display.flip()
 
-    def get_cell(self, mouse_pos):
+    @staticmethod
+    def get_cell(mouse_pos):
         # определяем на какой из уровней нажали
         if 150 <= mouse_pos[0] <= 140 + 150 and 115 <= mouse_pos[1] <= 115 + 140:
             return 1
