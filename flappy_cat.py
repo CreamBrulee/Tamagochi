@@ -3,20 +3,12 @@ import os
 import sys
 import random
 from button_and_consts import Button, FPS, terminate, HEIGHT, WIDTH, earning_money
+from button_and_consts import load_image
 import sqlite3
 
 screen = 0
 clock = 0
 score = 0
-
-
-def load_image(name):
-    fullname = os.path.join(name)
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
 
 
 # экран старта

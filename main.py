@@ -5,6 +5,7 @@ import pygame
 from catchfoodgame import catchfoodgamef
 import catchfoodgame
 from button_and_consts import Button, WIDTH, HEIGHT, FPS, terminate
+from button_and_consts import load_image
 import flappy_cat
 import micehunt
 import button_and_consts
@@ -15,26 +16,6 @@ cat1group = pygame.sprite.Group()
 startsc_buttons = pygame.sprite.Group()
 catgroup = pygame.sprite.Group()
 coins_gr = pygame.sprite.Group()
-
-
-# функция для загрузки фото
-def load_image(name, colorkey=None):
-    if not name.split('/')[0] == 'data':
-        fullname = os.path.join('data', name)
-    else:
-        fullname = name
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image
-    return image
 
 
 # класс для создания анимации
@@ -483,7 +464,7 @@ def clothes_screen():
             if result == 1:
                 buttons_clothes.append(
                     Button(85 + 110 * (kol - 1), 420, load_image(
-                        'clothes/' + i + '_dark.PNG'), (70, 70), screen, i, False))
+                        'data/clothes/' + i + '_dark.PNG'), (70, 70), screen, i, False))
             else:
                 buttons_clothes.append(
                     Button(85 + 110 * (kol - 1), 420, load_image('data/clothes/' + i + '.PNG'), (70, 70), screen, i,
@@ -658,8 +639,6 @@ def shop_screen():
                 screen.blit(pygame.transform.scale(load_image('data/coin.png'), (25, 25)),
                             (230 + 110 * (kol - 1), 285))
                 buttons_buy.append(Button(75 + 110 * kol, 320, buy, (70, 40), screen, key, False))
-                # screen.blit(pygame.transform.scale(load_image('data/costs/' + str(volume) + '.png'), (35, 35)),
-                #            (145 + 110 * (kol - 1), 165))
             kol += 1
         for i in buttons_buy:
             i.draw()

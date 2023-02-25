@@ -4,6 +4,7 @@ import pygame
 import os
 import sys
 from button_and_consts import WIDTH, HEIGHT, FPS, terminate, Button, earning_money
+from button_and_consts import load_image
 import sqlite3
 
 
@@ -15,20 +16,6 @@ screen = 0
 clock = 0
 score = 0
 hearts = 3
-
-
-# функция для загрузки фото
-def load_image(name, colorkey=None):
-    if not os.path.isfile(name):
-        print(f"Файл с изображением '{name}' не найден")
-        sys.exit()
-    image = pygame.image.load(name)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    return image
 
 
 # определение картинок жизней
