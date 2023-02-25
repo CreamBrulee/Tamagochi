@@ -365,6 +365,7 @@ def food_screen():
         draw_fon()
         draw_money()
         draw_foodsc()
+        draw_sleepsc()
         draw_maincat()
         extra_screen_food_and_clothes()
         for event in pygame.event.get():
@@ -444,6 +445,7 @@ def clothes_screen():
         draw_fon()
         draw_money()
         draw_foodsc()
+        draw_sleepsc()
         draw_maincat()
         extra_screen_food_and_clothes()
         for event in pygame.event.get():
