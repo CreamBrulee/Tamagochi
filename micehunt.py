@@ -147,6 +147,7 @@ class tablet_win_or_defeat:
         return self.get_cell(mouse_pos)
 
     def get_cell(self, mouse_pos):
+        clock = pygame.time.Clock()
         if self.win:
             if 445 - 95 <= mouse_pos[0] <= 445 and 449 <= mouse_pos[1] <= 489:
                 if self.lvl <= 5:
@@ -178,7 +179,18 @@ class tablet_win_or_defeat:
                         # all_sprites_try.draw(screen1)
                         pygame.display.flip()
                 else:
-                    pass
+                    my_sprite = pygame.sprite.Group()
+                    sprite_1 = pygame.sprite.Sprite()
+                    sprite_1.image = load_image('coming_soon.png')
+                    sprite_1.rect = sprite_1.image.get_rect()
+                    my_sprite.add(sprite_1)
+                    sprite_1.rect = 0, 0
+                    for i in range(100):
+                        my_sprite.draw(screen)
+                        pygame.display.flip()
+                        clock.tick(FPS)
+                    if micehunt_f():
+                        return True
         else:
             if 299 <= mouse_pos[0] <= 489 and 422 <= mouse_pos[1] <= 482:
                 board = Board(10, 6)
@@ -561,6 +573,12 @@ class menu_lvl:
         sprite_1.rect = 150, 115
 
         sprite_1 = pygame.sprite.Sprite()
+        sprite_1.image = pygame.transform.scale(load_image('next_rofl.png'), (70, 70))
+        sprite_1.rect = sprite_1.image.get_rect()
+        sprites.add(sprite_1)
+        sprite_1.rect = 635, 230
+
+        sprite_1 = pygame.sprite.Sprite()
         sprite_1.image = load_image('levels_obramlenie.png')
         sprite_1.rect = sprite_1.image.get_rect()
         sprites.add(sprite_1)
@@ -752,6 +770,18 @@ def micehunt_f():
                     return True
                 if 760 <= pos[0] <= 800 and 0 <= pos[1] <= 40:
                     return True
+                if 655 <= pos[0] <= 700 and 230 <= pos[1] <= 300:
+                    my_sprite = pygame.sprite.Group()
+                    sprite_1 = pygame.sprite.Sprite()
+                    sprite_1.image = load_image('coming_soon.png')
+                    sprite_1.rect = sprite_1.image.get_rect()
+                    my_sprite.add(sprite_1)
+                    sprite_1.rect = 0, 0
+                    for i in range(100):
+                        my_sprite.draw(screen)
+                        pygame.display.flip()
+                        clock.tick(FPS)
+
         screen.fill((215, 125, 49))
         all_sprites_for_menu_lvl = pygame.sprite.Group()
         board1.render(screen, all_sprites_for_menu_lvl)
